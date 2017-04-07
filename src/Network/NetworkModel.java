@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class NetworkModel {
 
 
-    public NetworkModel(){
+    NetworkModel(){
         try {
             Scanner scan = new Scanner(System.in);
             System.out.println("Please enter username");
@@ -27,23 +27,33 @@ public class NetworkModel {
             System.out.println("Connection has been made you can start chatting");
             while (true){
                 sendMsg(socket, group, scan);
-
+                recvMsg(socket);
             }
+
         }
         catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    public void sendMsg(MulticastSocket socket, InetAddress group, Scanner scan){
+    private void sendMsg(MulticastSocket socket, InetAddress group, Scanner scan){
         String txt =  scan.nextLine();
         DatagramPacket msg = new DatagramPacket(txt.getBytes(), txt.length(), group, 6666);
         try {
             socket.send(msg);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void recvMsg(MulticastSocket socket){
+        byte[] buf = new byte[1000];
+        DatagramPacket received = new DatagramPacket(buf, buf.length);
+        try {
+            socket.receive(received);
+            System.out.println(received.getData().toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
