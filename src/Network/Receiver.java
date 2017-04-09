@@ -6,9 +6,9 @@ import java.net.*;
 /**
  * Created by Rick on 9-4-2017.
  */
-public class Receiver {
+public class Receiver implements Runnable {
 
-    public static void main(String args[]) {
+    public void run() {
         MulticastSocket socket = null;
         DatagramPacket inPacket = null;
         byte[] inBuf = new byte[256];

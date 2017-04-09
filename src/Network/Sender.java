@@ -6,9 +6,9 @@ import java.util.Scanner;
 /**
  * Created by Rick on 9-4-2017.
  */
-public class Sender {
+public class Sender implements Runnable {
 
-    public static void main(String args[]) {
+    public void run() {
         DatagramSocket socket = null;
         DatagramPacket sendPack = null;
         byte[] outBuf;
