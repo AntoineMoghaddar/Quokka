@@ -19,8 +19,12 @@ public class Sender implements Runnable {
             socket = new DatagramSocket();
             long counter = 0;
             String msg;
+            System.out.println("Please enter your username");
+            String name = scan.nextLine();
+            System.out.println("Welcome " + name + " you are free to chat");
 
             while (true) {
+
                 msg = scan.nextLine();
                 counter++;
                 outBuf = msg.getBytes();
@@ -31,7 +35,7 @@ public class Sender implements Runnable {
 
                 socket.send(sendPack);
 
-                System.out.println("Server sends : " + msg);
+                System.out.println(name + " : " + msg);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ie) {
