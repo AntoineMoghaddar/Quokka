@@ -16,8 +16,9 @@ public class Receiver implements Runnable {
         try {
             //Prepare to join multicast group
             socket = new MulticastSocket(8888);
-            InetAddress address = InetAddress.getByName("224.2.2.3");
-            socket.setInterface(InetAddress.getByName("130.89.182.221"));
+            InetAddress address = InetAddress.getByName("224.0.0.2");
+            NetworkInterface networks = socket.getNetworkInterface();
+
             socket.joinGroup(address);
 
             while (true) {
