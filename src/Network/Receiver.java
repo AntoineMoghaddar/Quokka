@@ -9,6 +9,7 @@ import java.net.*;
 public class Receiver implements Runnable {
 
     public void run() {
+
         MulticastSocket socket = null;
         DatagramPacket inPacket = null;
         byte[] inBuf = new byte[256];
@@ -16,13 +17,19 @@ public class Receiver implements Runnable {
             //Prepare to join multicast group
             socket = new MulticastSocket(8888);
             InetAddress address = InetAddress.getByName("224.2.2.3");
+            socket.setInterface(InetAddress.getByName("130.89.182.221"));
             socket.joinGroup(address);
 
             while (true) {
+
                 inPacket = new DatagramPacket(inBuf, inBuf.length);
                 socket.receive(inPacket);
+
+                System.err.println("Received " + inPacket.getLength() +
+                        " bytes from " + inPacket.getAddress());
                 String msg = new String(inBuf, 0, inPacket.getLength());
                 System.out.println("From " + inPacket.getAddress() + " Msg : " + msg);
+                inPacket.setLength(inBuf.length);
             }
         } catch (IOException ioe) {
             System.out.println(ioe);

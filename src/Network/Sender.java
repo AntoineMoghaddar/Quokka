@@ -9,28 +9,30 @@ import java.util.Scanner;
 public class Sender implements Runnable {
 
     public void run() {
-        DatagramSocket socket = null;
+
+        MulticastSocket socket = null;
         DatagramPacket sendPack = null;
-        byte[] outBuf;
         final int PORT = 8888;
         Scanner scan = new Scanner(System.in);
+        byte[] outBuf;
+        InetAddress ip;
 
         try {
-            socket = new DatagramSocket();
+            socket = new MulticastSocket(8888);
             long counter = 0;
             String msg;
             System.out.println("Please enter your username");
             String name = scan.nextLine();
             System.out.println("Welcome " + name + " you are free to chat");
+            InetAddress address = InetAddress.getByName("224.2.2.3");
+            ip = InetAddress.getLocalHost();
+            socket.setInterface(ip);
 
             while (true) {
 
                 msg = scan.nextLine();
                 counter++;
                 outBuf = msg.getBytes();
-
-                //Send to multicast IP address and port
-                InetAddress address = InetAddress.getByName("224.2.2.3");
                 sendPack = new DatagramPacket(outBuf, outBuf.length, address, PORT);
 
                 socket.send(sendPack);
