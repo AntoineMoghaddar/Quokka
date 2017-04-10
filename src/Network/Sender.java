@@ -24,7 +24,7 @@ public class Sender implements Runnable {
             System.out.println("Please enter your username");
             String name = scan.nextLine();
             System.out.println("Welcome " + name + " you are free to chat");
-            InetAddress address = InetAddress.getByName("224.0.0.3");
+            InetAddress address = InetAddress.getByName("224.0.0.2");
             ip = InetAddress.getLocalHost();
             socket.setInterface(ip);
 
