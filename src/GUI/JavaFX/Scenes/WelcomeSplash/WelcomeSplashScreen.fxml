@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<VBox alignment="TOP_CENTER"
+      maxHeight="-Infinity"
+      maxWidth="-Infinity"
+      minHeight="-Infinity"
+      minWidth="-Infinity"
+      prefHeight="613.0"
+      prefWidth="431.0"
+      stylesheets="@../../../../GUI/StyleSheets/main.css"
+      xmlns="http://javafx.com/javafx/8.0.112"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplashController">
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <MenuBar fx:id="menu"/>
+    <ImageView
+            fitHeight="215.0"
+            fitWidth="342.0"
+            nodeOrientation="INHERIT"
+            pickOnBounds="true"
+            preserveRatio="true"
+            style=""
+    >
+        <Image url="@../../../../../AppIcon.png"/>
+        <VBox.margin>
+            <Insets top="40.0"/>
+        </VBox.margin>
+        <cursor>
+            <Cursor fx:constant="DEFAULT"/>
+        </cursor>
+    </ImageView>
+</VBox>

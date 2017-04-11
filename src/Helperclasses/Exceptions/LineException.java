@@ -1,4 +1,4 @@
-package Design;
+package Helperclasses.Exceptions;
 
 /**
  * Created by Antoine Moghaddar on 31-1-2016.
