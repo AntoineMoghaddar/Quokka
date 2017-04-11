@@ -16,6 +16,10 @@ public class Routing {
 
     private InetAddress localAddress;
 
+    private int routingDataSize;
+
+    private final int headerSize = 1; // amount of extra bytes added to routeData[]
+
     public Routing(InetAddress localaddr) {
         localAddress = localaddr;
     }
@@ -38,20 +42,25 @@ public class Routing {
 
     // Gets the information to send to other clients about its routing
     public byte[] generateRoutingData() {
-        byte tableSize = 0;
+        int tableSize = 0;
         for(InetAddress dest : RoutingTable.keySet()) {
             tableSize++;
         }
-        byte[] data = new byte[1+tableSize*8];
-        data[0] = tableSize;
+        byte[] data = new byte[headerSize+tableSize*8];
+        data[0] = 1;
 
         int counter = 0;
         for(InetAddress dest : RoutingTable.keySet()) {
-            System.arraycopy(dest.getAddress(),0,data,counter*8,4);
-            System.arraycopy(RoutingTable.get(dest).getAddress(),0,data,counter*8 + 4,4);
+            System.arraycopy(dest.getAddress(),0,data,counter*8+headerSize,4);
+            System.arraycopy(RoutingTable.get(dest).getAddress(),0,data,counter*8 + 4 + headerSize,4);
             counter++;
         }
+        routingDataSize = data.length;
         return data;
+    }
+
+    public int getRoutingDataSize() {
+        return routingDataSize;
     }
 
     // Update the RoutingTable using data from routing packets
@@ -61,42 +70,53 @@ public class Routing {
             RoutingTable.put(source, source);
         }
 
-        // The first byte should represent how many hosts are in the routeData
-        InetAddress[] routes = new InetAddress[routeData[0]*2];
+        HashMap<InetAddress, InetAddress> routes = routeDataToHashMap(routeData);
 
-        for(int i = 0; i < routeData[0]; i++) {
-            byte[] addr = new byte[]{routeData[i*4+1],routeData[i*4+2],routeData[i*4+3],routeData[i*4+4]};
+
+
+        for(HashMap.Entry<InetAddress, InetAddress> entry : routes.entrySet()) {
+            if(entry.getKey().equals(localAddress)) {
+                // Ignore if we are the destination
+                continue;
+            }
+            if(RoutingTable.containsKey(entry.getKey()) && RoutingTable.get(entry.getKey()).equals(entry.getValue())) {
+                // Ignore if nothing has changed
+                continue;
+            }
+
+            if(!RoutingTable.containsKey(entry.getKey()) && !entry.getValue().equals(localAddress)) {
+                // Add route if we dont have the route and if we are not the nexthop
+                RoutingTable.put(entry.getKey(),source);
+            }
+        }
+
+    }
+
+    public static HashMap<InetAddress,InetAddress> routeDataToHashMap(byte[] routeData) {
+        HashMap<InetAddress,InetAddress> res = new HashMap<>();
+
+        //Convert from byte[] to InetAddress[]
+        int addresses = routeData.length / 4;
+        byte[] buf = new byte[4];
+        InetAddress[] Inet = new InetAddress[addresses];
+        for(int i = 0; i < addresses; i++) {
+            buf[0]=routeData[0+i*4];
+            buf[1]=routeData[1+i*4];
+            buf[2]=routeData[2+i*4];
+            buf[3]=routeData[3+i*4];
+
             try {
-                routes[i] = InetAddress.getByAddress(addr);
-            } catch(UnknownHostException e) {
-                //Do nothing
+                Inet[i] = InetAddress.getByAddress(buf);
+            } catch (UnknownHostException e) {
                 //@TODO figure out if this is actually bad, im pretty sure its not
             }
         }
 
-        //routes[] now contains routeData[] converted to INetAddresses, with destination and next hop alternating
-        int i = 0;
-        while(i < routes.length)
-        {
-            if(routes[i+1].equals(localAddress)) {
-                i+=2;
-                continue;
-            }
-            if(RoutingTable.containsKey(routes[i])) {
-                if(RoutingTable.get(routes[i]).equals(routes[i+1])) {
-                    // nothing changed
-                    i+=2;
-                    continue;
-                }
-            }
-
-            if(!RoutingTable.containsKey(routes[i]) && !routes[i+1].equals(localAddress)) {
-                //We do not have this destination, apparently this host does
-                RoutingTable.put(routes[i], source);
-            }
-
-            i+=2;
+        //InetAddress[]
+        for(int i = 0; i < Inet.length / 2; i++) {
+            res.put(Inet[i], Inet[i+1]);
         }
 
+        return res;
     }
 }

@@ -2,11 +2,19 @@ package Network;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Rick on 9-4-2017.
  */
 public class Sender implements Runnable {
+
+    private Routing routing;
+
+    public Sender(Routing _routing) {
+        routing = _routing;
+    }
 
     public void run() {
 
@@ -16,6 +24,7 @@ public class Sender implements Runnable {
         Scanner scan = new Scanner(System.in);
         byte[] outBuf;
         InetAddress ip;
+
 
         try {
             socket = new MulticastSocket(8888);
@@ -28,12 +37,25 @@ public class Sender implements Runnable {
             ip = InetAddress.getLocalHost();
             socket.setInterface(ip);
 
+            long previousSendTime = 0;
+            int msgLength;
+
             while (true) {
+
+                if(System.currentTimeMillis() - previousSendTime > 5000) {
+                    //Make our presence known
+                    previousSendTime = System.currentTimeMillis();//possible slight delay
+
+                    socket.send(new DatagramPacket(routing.generateRoutingData(), routing.getRoutingDataSize(), address, PORT));
+                }
 
                 msg = scan.nextLine();
                 counter++;
-                outBuf = msg.getBytes();
-                sendPack = new DatagramPacket(outBuf, outBuf.length, address, PORT);
+                msgLength = msg.getBytes().length;
+                outBuf = new byte[msgLength + 1];
+                outBuf[0] = 0;//Code used to indicate that this is a message
+                System.arraycopy(msg.getBytes(),0,outBuf,1, msgLength);
+                sendPack = new DatagramPacket(outBuf, msgLength+1, address, PORT);
 
                 socket.send(sendPack);
 
@@ -47,4 +69,5 @@ public class Sender implements Runnable {
             System.out.println(ioe);
         }
     }
+
 }
