@@ -90,7 +90,7 @@ public class Routing {
                 }
             }
 
-            if(!RoutingTable.containsKey(routes[i])) {
+            if(!RoutingTable.containsKey(routes[i]) && !routes[i+1].equals(localAddress)) {
                 //We do not have this destination, apparently this host does
                 RoutingTable.put(routes[i], source);
             }
