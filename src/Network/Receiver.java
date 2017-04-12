@@ -8,6 +8,12 @@ import java.net.*;
  */
 public class Receiver implements Runnable {
 
+    private Routing routing;
+
+    public Receiver(Routing _routing) {
+        routing = _routing;
+    }
+
     public void run() {
 
         MulticastSocket socket = null;
@@ -26,14 +32,41 @@ public class Receiver implements Runnable {
                 inPacket = new DatagramPacket(inBuf, inBuf.length);
                 socket.receive(inPacket);
 
-                System.err.println("Received " + inPacket.getLength() +
-                        " bytes from " + inPacket.getAddress());
-                String msg = new String(inBuf, 0, inPacket.getLength());
-                System.out.println("From " + inPacket.getAddress() + " Msg : " + msg);
+                receivePacket(inPacket);
+//                System.err.println("Received " + inPacket.getLength() +
+//                        " bytes from " + inPacket.getAddress());
+//                String msg = new String(inBuf, 0, inPacket.getLength());
+//                System.out.println("From " + inPacket.getAddress() + " Msg : " + msg);
                 inPacket.setLength(inBuf.length);
             }
         } catch (IOException ioe) {
             System.out.println(ioe);
         }
     }
+
+    public void receivePacket(DatagramPacket receivedPacket) {
+        // Handle Missing packets here
+
+        // Handle the different types of packets here
+        switch(receivedPacket.getData()[0]) {
+            case 0:
+                // Message
+                String msg = new String(receivedPacket.getData(),1,receivedPacket.getLength()-1);
+                System.out.println("From " + receivedPacket.getAddress() + " Msg : " + msg);
+                break;
+            case 1:
+                // Routing Packet
+                routing.updateRoute(receivedPacket.getData(),receivedPacket.getAddress());
+                break;
+            case 2:
+                //ACK packet
+
+
+            default:
+                // Wrong packet, discard
+                break;
+        }
+
+    }
+
 }
