@@ -14,7 +14,7 @@ public class LoginScreen implements Buildable {
     @Override
     public Parent getScreen() throws IOException {
         Logger.notice("reached RegisterScreen Build");
-//        Logger.confirm(FXMLLoader.load(getClass().getResource("LoginScreenScreen.fxml")));
+//        Logger.confirm(FXMLLoader.load(getClass().getResource("RegisterScreenScreen.fxml")));
         return
                 FXMLLoader
                         .load(
