@@ -50,7 +50,6 @@ public class Sender implements Runnable {
             int msgLength;
 
             while (true) {
-                sendFile(socket, address);
 
                 if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
