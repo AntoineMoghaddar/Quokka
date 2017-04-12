@@ -45,7 +45,9 @@ public class Receiver implements Runnable {
     }
 
     public void receivePacket(DatagramPacket receivedPacket) {
-        // Handle receiving packets here, different types of packets need to be handled differently
+        // Handle Missing packets here
+
+        // Handle the different types of packets here
         switch(receivedPacket.getData()[0]) {
             case 0:
                 // Message
