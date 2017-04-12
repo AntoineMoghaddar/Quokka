@@ -1,7 +1,11 @@
 package Network;
+import javax.sound.sampled.Port;
 import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,13 +23,15 @@ public class Sender implements Runnable {
 
     private static FileInputStream in;
 
+    private static final int PORT = 8888;
+
     public void run() {
 
         MulticastSocket socket = null;
         DatagramPacket sendPack = null;
-        final int PORT = 8888;
         Scanner scan = new Scanner(System.in);
         byte[] outBuf;
+
         InetAddress ip;
 
 
@@ -75,67 +81,35 @@ public class Sender implements Runnable {
 
     private void sendFile(MulticastSocket socket, InetAddress group) {
         File test = new File("messages.txt");
-        System.out.println("File sending started from : " + test.getPath());
-        //intial pack
-        int fileSize = (int) test.length();
-        double numPack = (fileSize / 1028);
-        System.out.println("" + numPack);
-        double sendBound = (80 / numPack);
-        double strikes = 0;
-        byte[] firstPack = new byte[4];
-        intToBytAarr(fileSize, firstPack);
-        DatagramPacket firstSend = new DatagramPacket(firstPack, firstPack.length, group, 8888);
+        Path path = test.toPath();
+        int sendSize = 1024;
         try {
-            socket.send(firstSend);
+            byte[] fileArray = Files.readAllBytes(path);
+            for(int seq = 0; seq < fileArray.length ; seq++) {
+                byte[] buf = new byte[fileArray.length + 2];
+                buf[0] = 4;
+                buf[1] = (byte) seq;
+                if (seq == 0 && buf.length <= sendSize) {
+                    Arrays.copyOfRange(buf, 0, buf.length );
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                    socket.send(packet);
+                } else if( seq == 0 && buf.length > sendSize) {
+                    Arrays.copyOfRange(buf, 0, sendSize);
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                    socket.send(packet);
+                }
+                else if(buf.length > (seq*2) * sendSize){
+                    Arrays.copyOfRange(buf, seq * sendSize, (seq *2) * sendSize);
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                }
+                else{
+                    Arrays.copyOfRange(buf, seq * sendSize, buf.length);
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                }
+            }
+           System.out.println("" + fileArray + " Size; " + fileArray.length);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //rest of packs
-        try {
-            in = new FileInputStream(test);
-            byte[] data = new byte[1028];
-            int seqs = 0;
-            int numBytes = 0;
-            int sentBytes = 0;
-
-            while ((numBytes = in.read(data)) != -1) {
-                seqs++;
-                strikes += sendBound;
-                if (strikes >= 1) {
-                    for (int i = 0; i < (int) strikes; i++) {
-                        System.out.println("|");
-                        strikes--;
-                    }
-                }
-
-            }
-            byte[] dataseq = new byte[4];
-            intToBytAarr(seqs, dataseq);
-            sentBytes += numBytes;
-
-            //data + sequence
-            byte[] dataPlusSeq = new byte[dataseq.length +data.length];
-            System.arraycopy(dataseq, 0, dataPlusSeq, 0, dataseq.length);
-            System.arraycopy(data, 0, dataPlusSeq, dataseq.length, data.length);
-
-            //send
-            DatagramPacket toSend = new DatagramPacket(dataPlusSeq, dataPlusSeq.length);
-            socket.send(toSend);
-
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-    }
-
-    public static void intToBytAarr(int number, byte[] data) {
-        for (int i = 0; i < 4; ++i) {
-            int shift = i << 3; // i * 8
-            data[3 - i] = (byte) ((number & (0xff << shift)) >>> shift);
-        }
-
     }
 }
