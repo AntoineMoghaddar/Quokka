@@ -48,8 +48,7 @@ public class ClassManager {
 
         Menu navigation = new Menu("Navigatie");
         MenuItem mainMenu = new MenuItem("Hoofdmenu");
-        MenuItem calculate = new MenuItem("Nieuwe berekening");
-        MenuItem open = new MenuItem("Open berekeningen");
+//        MenuItem calculate = new MenuItem("Nieuwe berekening");
         MenuItem stroke = new SeparatorMenuItem();
         MenuItem exit = new MenuItem("Verlaat programma");
 
@@ -61,13 +60,13 @@ public class ClassManager {
             }
         });
 
-        calculate.setOnAction(e -> {
+//        calculate.setOnAction(e -> {
 //            try {
 //                Launcher.setScreen(getCalculationScreen().getScreen());
 //            } catch (IOException ex) {
 //                ex.printStackTrace();
 //            }
-        });
+//        });
 
 //        open.setOnAction(e -> {
 //            try {
@@ -79,18 +78,20 @@ public class ClassManager {
 
 //        exit.setOnAction(e -> Launcher.close());
 
-        navigation.getItems().addAll(mainMenu, calculate, open, stroke, exit);
+        navigation.getItems().addAll(mainMenu, stroke, exit);
 
         Menu help = new Menu("Help");
         MenuItem about = new MenuItem("Over Ketting Calculator");
         about.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("");
-            alert.setHeaderText("Over Ketting Calculator");
-            alert.setContentText("Ketting Calculator is een programma\n" +
-                    "gemaakt door Marnick van der Arend\n" +
-                    "om nieuwe kettinglengtes op een optimale\n" +
-                    "en snelle manier te berekenen\n");
+            alert.setHeaderText("About");
+            alert.setContentText("Quokka is a online communication system\n" +
+                    "made by a team of four developers:\n" +
+                    "Antoine Moghaddar\n" +
+                    "Rowin Veneman\n" +
+                    "Rick Röttjers\n" +
+                    "Brent Verharen\n");
 
             alert.show();
         });
@@ -113,7 +114,7 @@ public class ClassManager {
 
         loginButton.setOnAction(e -> {
             if (name.getText().equals("admin") && pass.getText().equals("admin"))
-                System.out.println("Zou naar Admin scherm gaan");
+                System.out.println("Enter Admin Screen");
         });
 
         vbox.setAlignment(Pos.CENTER);
@@ -137,33 +138,5 @@ public class ClassManager {
         return welcomeSplash;
     }
 
-//    public static StepScreen getStepScreen() { return stepScreen;}
-//
-//    public static CalculationScreen getCalculationScreen() {
-//        return calculationScreen;
-//    }
-//
-//    public static ChainAPL getChainAPL() {
-//        return chainAPL;
-//    }
-//
-//    public static ChainController getChainController() {
-//        return chainController;
-//    }
-//
-//    public static OpenScreen getOpenScreen(){
-//        return openScreen;
-//    }
-//
-//    public static AdminScreen getAdminScreen() {
-//        return adminScreen;
-//    }
-//
-//    public static SaveBox getSaveBox(){
-//        return saveBox;
-//    }
-//
-//    public static void setSaveBox(SaveBox _saveBox) {
-//        saveBox = _saveBox;
-//    }
+
 }

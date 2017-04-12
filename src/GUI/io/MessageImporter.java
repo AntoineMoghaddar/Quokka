@@ -24,7 +24,7 @@ public class MessageImporter {
             results.add(new Message(parts[0], parts[2]));
         }
 
-        System.out.println("Imported " + results.size() + " results");
+        System.out.println("Imported " + results.size() + " messages");
         return results;
     }
 }

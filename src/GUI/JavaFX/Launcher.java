@@ -14,10 +14,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -56,7 +59,9 @@ public class Launcher extends Application {
         current.setWidth(850);
 
         current.setOnCloseRequest(Launcher::close);
-//        current.getIcons().add(new Image(getClass().getResourceAsStream("./AppIcon.png")));
+//        File file = new File("/img.png");
+//        Logger.err(file.toPath() + " Value of File");
+//        current.getIcons().add(new Image(getClass().getResourceAsStream(file.toString())));
 
         primaryStage.setTitle("Quokka Network");
 
@@ -65,7 +70,7 @@ public class Launcher extends Application {
         primaryStage.show();
     }
 
-    public static void close(WindowEvent... event) {
+    private static void close(WindowEvent... event) {
 
         boolean directEvent = false;
         if (event.length != 0)
@@ -97,7 +102,7 @@ public class Launcher extends Application {
         return messages;
     }
 
-    public static Stage getScreen() {
+    private static Stage getScreen() {
         if (current == null) Logger.err("Returning null, pls don't");
         return current;
     }
