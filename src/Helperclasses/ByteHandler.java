@@ -73,7 +73,7 @@ public class ByteHandler {
     }
 
     public static byte[] intToBytes(int src) {
-        byte[2] res = new byte[2];
+        byte[] res = new byte[2];
 
         res[0] = byteCopy(src,0,res[0],0,8);
         res[1] = byteCopy(src,8,res[1],0,8);
