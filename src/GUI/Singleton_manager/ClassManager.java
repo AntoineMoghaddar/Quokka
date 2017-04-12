@@ -1,6 +1,7 @@
 package GUI.Singleton_manager;
 
 import GUI.JavaFX.Launcher;
+import GUI.JavaFX.Scenes.LoginScreen.LoginScreen;
 import GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplash;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ public class ClassManager {
 
     private static Launcher launcher;
     private static WelcomeSplash welcomeSplash;
+    private static LoginScreen loginScreen;
 //    private static CalculationScreen calculationScreen;
 //    private static OpenScreen openScreen;
 //    private static AdminScreen adminScreen;
@@ -35,10 +37,7 @@ public class ClassManager {
         menuBar.setUseSystemMenuBar(true);
 
         welcomeSplash = new WelcomeSplash();
-//        calculationScreen = new CalculationScreen();
-//        openScreen = new OpenScreen();
-//        adminScreen = new AdminScreen();
-//        stepScreen = new StepScreen();
+        loginScreen = new LoginScreen();
 //
 //        chainAPL = new ChainAPL();
 //        chainController = new ChainController();
@@ -138,5 +137,7 @@ public class ClassManager {
         return welcomeSplash;
     }
 
-
+    public static LoginScreen getLoginScreen() {
+        return loginScreen;
+    }
 }

@@ -1,6 +1,8 @@
 package GUI.JavaFX.Scenes.WelcomeSplash;
 
 import Design.Logger;
+import GUI.JavaFX.Launcher;
+import GUI.Singleton_manager.ClassManager;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -49,6 +51,9 @@ public class WelcomeSplashController implements Initializable {
             @Override
             public void run() {
                 Logger.notice("Reached Controller Splash -> +2 seconds");
+                Logger.confirm("RUNNING MIRIO SWITCH -> LoginScreen");
+//                Launcher.setScreen(ClassManager.getLoginScreen().getScreen());
+
             }
         }, 2000);
     }
