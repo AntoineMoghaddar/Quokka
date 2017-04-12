@@ -1,4 +1,6 @@
 package Network;
+
+import Helperclasses.*;
 import javax.sound.sampled.Port;
 import javax.xml.crypto.Data;
 import java.io.*;
@@ -9,6 +11,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 /**
  * Created by Rick on 9-4-2017.
@@ -50,7 +53,7 @@ public class Sender implements Runnable {
             int msgLength;
 
             while (true) {
-
+                sendFile(socket, address);
                 if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
                     previousSendTime = System.currentTimeMillis();//possible slight delay
@@ -82,32 +85,50 @@ public class Sender implements Runnable {
     private void sendFile(MulticastSocket socket, InetAddress group) {
         File test = new File("messages.txt");
         Path path = test.toPath();
-        int sendSize = 1024;
+        int sendSize = 128; //byte send capacity
+        int numPack = 0;
         try {
             byte[] fileArray = Files.readAllBytes(path);
-            for(int seq = 0; seq < fileArray.length ; seq++) {
-                byte[] buf = new byte[fileArray.length + 2];
-                buf[0] = 4;
-                buf[1] = (byte) seq;
-                if (seq == 0 && buf.length <= sendSize) {
-                    Arrays.copyOfRange(buf, 0, buf.length );
+            byte[] buf = new byte[fileArray.length + 5];
+            System.out.println("" + fileArray + " Size; " + fileArray.length);
+            if((numPack = fileArray.length / sendSize) == 0){
+                numPack = 1;
+            }else{
+                numPack = numPack;
+            }
+            for(int seq = 0; seq <= numPack; seq++){
+                fileArray = Files.readAllBytes(path);
+                buf = new byte[fileArray.length + 5];
+                buf[0] = (byte) 4;
+                byte[] bufSeq = ByteHandler.intToBytes(seq);
+                buf[1] = bufSeq[0];
+                buf[2] = bufSeq[1];
+                byte[] bufNum = ByteHandler.intToBytes(numPack);
+                buf[3] = bufNum[0];
+                buf[4] = bufNum[1];
+                if(seq == 0 && numPack == 1){
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
-                } else if( seq == 0 && buf.length > sendSize) {
-                    Arrays.copyOfRange(buf, 0, sendSize);
+                } else if(seq == 0 && numPack != 1){
+                    byte[] cutArray = Arrays.copyOfRange(buf, 0, sendSize);// might have to be +1
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
-                }
-                else if(buf.length > (seq*2) * sendSize){
-                    Arrays.copyOfRange(buf, seq * sendSize, (seq *2) * sendSize);
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                }
-                else{
-                    Arrays.copyOfRange(buf, seq * sendSize, buf.length);
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                } else if(seq != 0 && numPack != 1){
+                    int remain = fileArray.length - (seq * sendSize);
+                    if(remain > sendSize){
+                        byte[] cutArray = Arrays.copyOfRange(buf, seq * sendSize, seq * 2 * sendSize);
+                        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                        socket.send(packet);
+                    } else{
+                        byte[] cutArray = Arrays.copyOfRange(buf, seq * sendSize, (seq * sendSize) + remain);
+                        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
+                        socket.send(packet);
+                    }
+
                 }
             }
-           System.out.println("" + fileArray + " Size; " + fileArray.length);
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
