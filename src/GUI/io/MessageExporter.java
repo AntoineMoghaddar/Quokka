@@ -26,6 +26,6 @@ public class MessageExporter {
         printWriter.flush();
         printWriter.close();
 
-        System.out.println("Exported " + results.size() + " results");
+        System.out.println("Exported " + results.size() + " messages");
     }
 }

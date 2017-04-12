@@ -14,13 +14,6 @@ public class WelcomeSplash implements Buildable {
     @Override
     public Parent getScreen() throws IOException {
         Logger.notice("reached WelcomeSplash Build");
-//        Logger.confirm(FXMLLoader.load(getClass().getResource("WelcomeSplashScreen.fxml")));
-        return
-                FXMLLoader
-                        .load(
-                                getClass()
-                                        .getResource(
-                                                "WelcomeSplashScreen.fxml"
-                                        ));
+        return FXMLLoader.load(getClass().getResource("WelcomeSplashScreen.fxml"));
     }
 }
