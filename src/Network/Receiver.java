@@ -18,7 +18,7 @@ public class Receiver implements Runnable {
 
         MulticastSocket socket = null;
         DatagramPacket inPacket = null;
-        byte[] inBuf = new byte[256];
+        byte[] inBuf = new byte[1028];
         try {
             //Prepare to join multicast group
             socket = new MulticastSocket(8888);
@@ -28,37 +28,40 @@ public class Receiver implements Runnable {
             socket.joinGroup(address);
 
             while (true) {
-                inPacket = new DatagramPacket(inBuf, inBuf.length);
+                inPacket = new DatagramPacket(inBuf, inBuf.length );
                 socket.receive(inPacket);
 
-                receivePacket(inPacket);
+                receivePacket(inPacket, socket);
 //                System.err.println("Received " + inPacket.getLength() +
 //                        " bytes from " + inPacket.getAddress());
 //                String msg = new String(inBuf, 0, inPacket.getLength());
 //                System.out.println("From " + inPacket.getAddress() + " Msg : " + msg);
-                inPacket.setLength(inBuf.length);
+
             }
         } catch (IOException ioe) {
             System.out.println(ioe);
         }
     }
 
-    public void receivePacket(DatagramPacket receivedPacket) {
+    public void receivePacket(DatagramPacket receivedPacket, MulticastSocket socket) {
         // Handle Missing packets here
 
         // Handle the different types of packets here
-        switch(receivedPacket.getData()[0]) {
+        switch (receivedPacket.getData()[0]) {
             case 0:
                 // Message
-                String msg = new String(receivedPacket.getData(),1,receivedPacket.getLength()-1);
+                String msg = new String(receivedPacket.getData(), 1, receivedPacket.getLength() - 1);
                 System.out.println("From " + receivedPacket.getAddress() + " Msg : " + msg);
                 break;
             case 1:
                 // Routing Packet
-                routing.updateRoute(receivedPacket.getData(),receivedPacket.getAddress());
+                routing.updateRoute(receivedPacket.getData(), receivedPacket.getAddress());
                 break;
             case 2:
                 //ACK packet
+            case 4:
+                System.out.println("received file header");
+                receiveFile(socket, receivedPacket);
 
             default:
                 // Wrong packet, discard
@@ -67,45 +70,18 @@ public class Receiver implements Runnable {
 
     }
 
-    private void receiveFile(MulticastSocket socket){
-        DatagramPacket packet;
-
-        int packCount = 0;
-        byte[] firstPack= new byte[4];
-        DatagramPacket firstReceived = new DatagramPacket(firstPack, firstPack.length);
+    private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
         try {
-            socket.setReceiveBufferSize(450);
-            socket.receive(firstReceived);
-            int fileSize = intToByte(firstPack);
-            System.out.println("File size = " + fileSize);
-            int numPack = (fileSize / 1028);
-            double sendBound = (80 / numPack);
-            double strikes = 0;
-
-            for(int i = 0; i < numPack; i++){
-                System.out.println(packCount + " < " + numPack);
-                strikes += sendBound;
-                if (strikes >= 1) {
-                    while(strikes >= 1) {
-                        System.out.println("|");
-                        strikes--;
-                    }
-                }
-                byte[] buf = new byte[1028];
-                packet = new DatagramPacket(buf, buf.length);
-                socket.receive(packet);
-                packCount++;
-            }
-
-
+            FileOutputStream stream = new FileOutputStream("test1.txt");
+            stream.write(packet.getData());
+            System.out.println("data received 1" + packet.getData());
+            stream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
 
-    private int intToByte(byte[] b){
-        return b[0] << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8 | (b[3] & 0xff);
     }
-
 }
