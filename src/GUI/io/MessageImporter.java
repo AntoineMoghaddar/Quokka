@@ -11,7 +11,7 @@ public class MessageImporter {
 
     public static List<Message> importMessages() throws Exception {
 
-        Scanner scanner = new Scanner(new File("messages.txt"));
+        Scanner scanner = new Scanner(new File("results.txt"));
         List<Message> results = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
@@ -24,7 +24,7 @@ public class MessageImporter {
             results.add(new Message(parts[0], parts[2]));
         }
 
-        System.out.println("Imported " + results.size() + " messages");
+        System.out.println("Imported " + results.size() + " results");
         return results;
     }
 }

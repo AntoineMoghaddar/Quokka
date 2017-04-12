@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
@@ -11,6 +12,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplashController"
       fx:id="mainWelcome">
+    <MenuBar fx:id="menuBar"/>
     <opaqueInsets>
         <Insets/>
     </opaqueInsets>
@@ -20,6 +22,5 @@
             <Insets top="40.0"/>
         </VBox.margin>
     </ImageView>
-    <Text fx:id="textWelcomeSplash">
-    </Text>
+    <Text fx:id="textWelcomeSplash"/>
 </VBox>

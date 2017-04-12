@@ -70,7 +70,7 @@ public class Launcher extends Application {
         primaryStage.show();
     }
 
-    private static void close(WindowEvent... event) {
+    public static void close(WindowEvent... event) {
 
         boolean directEvent = false;
         if (event.length != 0)

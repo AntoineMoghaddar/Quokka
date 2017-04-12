@@ -1,6 +1,7 @@
 package GUI.JavaFX.Scenes.LoginScreen;
 
 import Design.Logger;
+import GUI.Singleton_manager.ClassManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -15,16 +16,12 @@ import java.util.TimerTask;
  */
 public class LoginScreenController implements Initializable{
     @FXML
-    private Button button;
-    @FXML
-    private TextField username;
-    @FXML
-    private PasswordField password;
+    private MenuBar menu;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Button button = new Button();
-        TextField username = new TextField();
-        PasswordField password = new PasswordField();
+        menu.getMenus().setAll(ClassManager.getMenuBar().getMenus());
+
+        Logger.debug("reached login controller");
     }
 }

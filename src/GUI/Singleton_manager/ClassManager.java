@@ -1,5 +1,6 @@
 package GUI.Singleton_manager;
 
+import Design.Logger;
 import GUI.JavaFX.Launcher;
 import GUI.JavaFX.Scenes.LoginScreen.LoginScreen;
 import GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplash;
@@ -47,7 +48,6 @@ public class ClassManager {
 
         Menu navigation = new Menu("Navigatie");
         MenuItem mainMenu = new MenuItem("Hoofdmenu");
-//        MenuItem calculate = new MenuItem("Nieuwe berekening");
         MenuItem stroke = new SeparatorMenuItem();
         MenuItem exit = new MenuItem("Verlaat programma");
 
@@ -59,32 +59,16 @@ public class ClassManager {
             }
         });
 
-//        calculate.setOnAction(e -> {
-//            try {
-//                Launcher.setScreen(getCalculationScreen().getScreen());
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
 
-//        open.setOnAction(e -> {
-//            try {
-//                Launcher.setScreen(getOpenScreen().getScreen());
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-
-//        exit.setOnAction(e -> Launcher.close());
+        exit.setOnAction(e -> Launcher.close());
 
         navigation.getItems().addAll(mainMenu, stroke, exit);
 
         Menu help = new Menu("Help");
-        MenuItem about = new MenuItem("Over Ketting Calculator");
+        MenuItem about = new MenuItem("About Quokka");
         about.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("");
-            alert.setHeaderText("About");
             alert.setContentText("Quokka is a online communication system\n" +
                     "made by a team of four developers:\n" +
                     "Antoine Moghaddar\n" +
@@ -104,16 +88,16 @@ public class ClassManager {
         PasswordField pass = new PasswordField();
         Button loginButton = new Button("Log in");
 
-        name.setPromptText("Naam");
-        pass.setPromptText("Wachtwoord");
+        name.setPromptText("Name");
+        pass.setPromptText("Password");
 
         name.setPrefWidth(150);
         pass.setPrefWidth(150);
         loginButton.setPrefWidth(150);
 
         loginButton.setOnAction(e -> {
-            if (name.getText().equals("admin") && pass.getText().equals("admin"))
-                System.out.println("Enter Admin Screen");
+            Logger.notice(name.getText().equals("admin") && pass.getText().equals("admin") ?
+                    "Entered Admin Panel" : "USER NOT RECOGNIZED AS ADMIN");
         });
 
         vbox.setAlignment(Pos.CENTER);
