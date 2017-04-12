@@ -1,4 +1,5 @@
 package Network;
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
@@ -15,6 +16,8 @@ public class Sender implements Runnable {
     public Sender(Routing _routing) {
         routing = _routing;
     }
+
+    private static FileInputStream in;
 
     public void run() {
 
@@ -42,7 +45,7 @@ public class Sender implements Runnable {
 
             while (true) {
 
-                if(System.currentTimeMillis() - previousSendTime > 5000) {
+                if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
                     previousSendTime = System.currentTimeMillis();//possible slight delay
 
@@ -54,8 +57,8 @@ public class Sender implements Runnable {
                 msgLength = msg.getBytes().length;
                 outBuf = new byte[msgLength + 1];
                 outBuf[0] = 0;//Code used to indicate that this is a message
-                System.arraycopy(msg.getBytes(),0,outBuf,1, msgLength);
-                sendPack = new DatagramPacket(outBuf, msgLength+1, address, PORT);
+                System.arraycopy(msg.getBytes(), 0, outBuf, 1, msgLength);
+                sendPack = new DatagramPacket(outBuf, msgLength + 1, address, PORT);
 
                 socket.send(sendPack);
 
@@ -70,4 +73,69 @@ public class Sender implements Runnable {
         }
     }
 
+    private void sendFile(MulticastSocket socket, InetAddress group) {
+        File test = new File("messages.txt");
+        System.out.println("File sending started from : " + test.getPath());
+        //intial pack
+        int fileSize = (int) test.length();
+        double numPack = (fileSize / 1028);
+        System.out.println("" + numPack);
+        double sendBound = (80 / numPack);
+        double strikes = 0;
+        byte[] firstPack = new byte[4];
+        intToBytAarr(fileSize, firstPack);
+        DatagramPacket firstSend = new DatagramPacket(firstPack, firstPack.length, group, 8888);
+        try {
+            socket.send(firstSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //rest of packs
+        try {
+            in = new FileInputStream(test);
+            byte[] data = new byte[1028];
+            int seq = 0;
+            int numBytes = 0;
+            int sentBytes = 0;
+
+            while ((numBytes = in.read(data)) != -1) {
+                seq++;
+                strikes += sendBound;
+                if (strikes >= 1) {
+                    for (int i = 0; i < (int) strikes; i++) {
+                        System.out.println("|");
+                        strikes--;
+                    }
+                }
+
+            }
+            byte[] dataseq = new byte[4];
+            intToBytAarr(seq, dataseq);
+            sentBytes += numBytes;
+
+            //data + sequence
+            byte[] dataPlusSeq = new byte[dataseq.length +data.length];
+            System.arraycopy(dataseq, 0, dataPlusSeq, 0, dataseq.length);
+            System.arraycopy(data, 0, dataPlusSeq, dataseq.length, data.length);
+
+            //send
+            DatagramPacket toSend = new DatagramPacket(dataPlusSeq, dataPlusSeq.length);
+            socket.send(toSend);
+
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+    }
+
+    public static void intToBytAarr(int number, byte[] data) {
+        for (int i = 0; i < 4; ++i) {
+            int shift = i << 3; // i * 8
+            data[3 - i] = (byte) ((number & (0xff << shift)) >>> shift);
+        }
+
+    }
 }

@@ -28,7 +28,6 @@ public class Receiver implements Runnable {
             socket.joinGroup(address);
 
             while (true) {
-
                 inPacket = new DatagramPacket(inBuf, inBuf.length);
                 socket.receive(inPacket);
 
@@ -61,12 +60,52 @@ public class Receiver implements Runnable {
             case 2:
                 //ACK packet
 
-
             default:
                 // Wrong packet, discard
                 break;
         }
 
+    }
+
+    private void receiveFile(MulticastSocket socket){
+        DatagramPacket packet;
+
+        int packCount = 0;
+        byte[] firstPack= new byte[4];
+        DatagramPacket firstReceived = new DatagramPacket(firstPack, firstPack.length);
+        try {
+            socket.setReceiveBufferSize(450);
+            socket.receive(firstReceived);
+            int fileSize = intToByte(firstPack);
+            System.out.println("File size = " + fileSize);
+            int numPack = (fileSize / 1028);
+            double sendBound = (80 / numPack);
+            double strikes = 0;
+
+            for(int i = 0; i < numPack; i++){
+                System.out.println(packCount + " < " + numPack);
+                strikes += sendBound;
+                if (strikes >= 1) {
+                    while(strikes >= 1) {
+                        System.out.println("|");
+                        strikes--;
+                    }
+                }
+                byte[] buf = new byte[1028];
+                packet = new DatagramPacket(buf, buf.length);
+                socket.receive(packet);
+                packCount++;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private int intToByte(byte[] b){
+        return b[0] << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8 | (b[3] & 0xff);
     }
 
 }
