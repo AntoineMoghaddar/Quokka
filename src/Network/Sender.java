@@ -95,12 +95,12 @@ public class Sender implements Runnable {
         try {
             in = new FileInputStream(test);
             byte[] data = new byte[1028];
-            int seq = 0;
+            int seqs = 0;
             int numBytes = 0;
             int sentBytes = 0;
 
             while ((numBytes = in.read(data)) != -1) {
-                seq++;
+                seqs++;
                 strikes += sendBound;
                 if (strikes >= 1) {
                     for (int i = 0; i < (int) strikes; i++) {
@@ -111,7 +111,7 @@ public class Sender implements Runnable {
 
             }
             byte[] dataseq = new byte[4];
-            intToBytAarr(seq, dataseq);
+            intToBytAarr(seqs, dataseq);
             sentBytes += numBytes;
 
             //data + sequence
