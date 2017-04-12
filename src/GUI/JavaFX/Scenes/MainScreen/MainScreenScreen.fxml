@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="BOTTOM_CENTER" prefHeight="750.0" prefWidth="850.0" stylesheets="@../../../../GUI/StyleSheets/main.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplashController">
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+    <MenuBar fx:id="menu" prefHeight="0.0" prefWidth="960.0" />
+   <VBox prefHeight="587.0" prefWidth="960.0">
+      <children>
+         <SplitPane>
+            <items>
+               <VBox prefHeight="200.0" prefWidth="100.0" />
+            </items>
+         </SplitPane>
+      </children>
+   </VBox>
+   <HBox alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="960.0" rotate="-0.0">
+      <children>
+         <Text fill="#fa2032" strokeType="OUTSIDE" strokeWidth="0.0" text="Quokka 0.1 alpha" textAlignment="CENTER" wrappingWidth="108.0">
+            <font>
+               <Font name="Comic Sans MS Bold Italic" size="12.0" />
+            </font>
+         </Text>
+          <ImageView fitHeight="61.0" fitWidth="110.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="">
+              <Image url="@../../img.png" />
+              <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+              </cursor>
+          </ImageView>
+      </children>
+   </HBox>
+
+</VBox>

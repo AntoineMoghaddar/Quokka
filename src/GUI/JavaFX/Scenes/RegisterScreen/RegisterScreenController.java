@@ -15,13 +15,13 @@ import java.util.ResourceBundle;
 public class RegisterScreenController implements Initializable{
     @FXML
     private Button button;
+    @FXML
     private TextField username;
+    @FXML
     private PasswordField password;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Button button = new Button();
-        TextField username = new TextField();
-        PasswordField password = new PasswordField();
+
     }
 }

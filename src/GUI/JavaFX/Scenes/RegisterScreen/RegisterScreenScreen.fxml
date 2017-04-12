@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -28,25 +25,58 @@
             <Cursor fx:constant="DEFAULT" />
         </cursor>
     </ImageView>
-   <Text fill="#6964c6" strokeType="OUTSIDE" strokeWidth="0.0" text="Quokka 0.1 alpha">
+   <Text fill="#e62032" strokeType="OUTSIDE" strokeWidth="0.0" text="Quokka 0.1 alpha">
       <font>
          <Font name="Comic Sans MS Bold Italic" size="19.0" />
       </font>
    </Text>
-   <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="111.0" prefWidth="431.0">
+   <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Username">
+      <VBox.margin>
+         <Insets top="10.0" />
+      </VBox.margin>
+   </TextField>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gender:" wrappingWidth="51.767578125">
+      <VBox.margin>
+         <Insets top="10.0" />
+      </VBox.margin>
+   </Text>
+   <HBox alignment="CENTER" prefHeight="10.0" prefWidth="431.0">
       <children>
-         <TextField alignment="CENTER" promptText="Username">
-            <FlowPane.margin>
-               <Insets left="15.0" right="15.0" />
-            </FlowPane.margin>
-         </TextField>
-         <PasswordField alignment="CENTER" promptText="Password">
-            <FlowPane.margin>
-               <Insets left="15.0" right="15.0" top="15.0" />
-            </FlowPane.margin>
-         </PasswordField>
+         <RadioButton mnemonicParsing="false" text="Male">
+            <HBox.margin>
+               <Insets right="15.0" />
+            </HBox.margin>
+         </RadioButton>
+         <RadioButton mnemonicParsing="false" text="Female">
+            <HBox.margin>
+               <Insets right="15.0" />
+            </HBox.margin>
+         </RadioButton>
+         <RadioButton mnemonicParsing="false" text="Apache Helicopter" />
       </children>
-   </FlowPane>
-   <Button mnemonicParsing="false" text="Login" />
+      <VBox.margin>
+         <Insets top="10.0" />
+      </VBox.margin>
+   </HBox>
+   <PasswordField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin>
+   </PasswordField>
+     <PasswordField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Re-enter Password">
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin>
+   </PasswordField>
+   <CheckBox mnemonicParsing="false" text="I have read and agree with the terms of service">
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin>
+   </CheckBox>
+   <Button mnemonicParsing="false" text="Register">
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin></Button>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" />
 
 </VBox>
