@@ -1,4 +1,4 @@
-package GUI.JavaFX.Scenes.LoginScreen;
+package GUI.JavaFX.Scenes.RegisterScreen;
 
 import Design.Logger;
 import GUI.JavaFX.Buildable;
@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * @author Moose.
  */
-public class LoginScreen implements Buildable {
+public class RegisterScreen implements Buildable {
     @Override
     public Parent getScreen() throws IOException {
         Logger.notice("reached RegisterScreen Build");

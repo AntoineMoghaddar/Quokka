@@ -1,24 +1,21 @@
-package GUI.JavaFX.Scenes.LoginScreen;
+package GUI.JavaFX.Scenes.RegisterScreen;
 
-import Design.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Brent Verharen on 11/04/2017.
  */
-public class LoginScreenController implements Initializable{
+public class RegisterScreenController implements Initializable{
     @FXML
     private Button button;
-    @FXML
     private TextField username;
-    @FXML
     private PasswordField password;
 
     @Override
