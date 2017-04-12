@@ -8,14 +8,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="613.0" prefWidth="431.0"
-      xmlns="http://javafx.com/javafx/8.0.112"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.JavaFX.Scenes.LoginScreen.LoginScreenController">
+<VBox fx:id="loginBox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="613.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.JavaFX.Scenes.LoginScreen.LoginScreenController">
     <opaqueInsets>
         <Insets />
     </opaqueInsets>
@@ -42,9 +40,22 @@
       <VBox.margin>
          <Insets top="15.0" />
       </VBox.margin></PasswordField>
-   <Button mnemonicParsing="false" text="Login">
+   <HBox alignment="CENTER" prefHeight="0.0" prefWidth="431.0">
+      <children>
+         <Button mnemonicParsing="false" text="Login">
+            <HBox.margin>
+               <Insets right="14.0" />
+            </HBox.margin>
+         </Button>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Or" />
+         <Button alignment="CENTER" mnemonicParsing="false" text="Register">
+            <HBox.margin>
+               <Insets left="14.0" />
+            </HBox.margin></Button>
+      </children>
       <VBox.margin>
          <Insets top="15.0" />
-      </VBox.margin></Button>
+      </VBox.margin>
+   </HBox>
 
 </VBox>
