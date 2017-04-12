@@ -1,5 +1,6 @@
 package GUI.io;
 
+import Design.Logger;
 import GUI.Main.Message;
 
 import java.io.File;
@@ -24,7 +25,7 @@ public class MessageImporter {
             results.add(new Message(parts[0], parts[2]));
         }
 
-        System.out.println("Imported " + results.size() + " results");
+        Logger.confirm("Imported " + results.size() + " results");
         return results;
     }
 }

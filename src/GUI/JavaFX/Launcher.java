@@ -44,6 +44,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        Logger.log("Connected to the target VM, address: '127.0.0.1:50101', transport: 'socket'");
         ClassManager.load(this);
 
         try {
