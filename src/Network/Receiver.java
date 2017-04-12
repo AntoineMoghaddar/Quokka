@@ -58,6 +58,9 @@ public class Receiver implements Runnable {
                 // Routing Packet
                 routing.updateRoute(receivedPacket.getData(),receivedPacket.getAddress());
                 break;
+            case 2:
+                //ACK packet
+
 
             default:
                 // Wrong packet, discard
