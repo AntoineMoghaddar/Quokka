@@ -30,8 +30,7 @@ public class LoginScreenController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ToggleButton toggle = new ToggleButton("Toggle color");
-
-        menu.getMenus().setAll(ClassManager.getMenuBar().getMenus());
+            menu.getMenus().setAll(ClassManager.getMenuBar().getMenus());
 
         loginBox.backgroundProperty().bind(Bindings.when(toggle.selectedProperty())
                 .then(new Background(new BackgroundFill(Color.CORNFLOWERBLUE, CornerRadii.EMPTY, Insets.EMPTY)))
