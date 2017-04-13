@@ -31,11 +31,23 @@ public class ByteHandler {
         return ((src >> position) & 1) == 1;
     }
 
+    public static boolean getBitAtPosition(int src, int position) {
+        return ((src >> position) & 1) == 1;
+    }
+
     public static byte setBitAtPosition(byte dest, int position, boolean value) {
         if(value) {
             return (byte)(dest | (1 << position));
         } else {
             return (byte)(dest & ~(1 << position));
+        }
+    }
+
+    public static int setBitAtPosition(int dest, int position, boolean value) {
+        if(value) {
+            return (dest | (1 << position));
+        } else {
+            return (dest & ~(1 << position));
         }
     }
 
@@ -47,9 +59,25 @@ public class ByteHandler {
         return temp;
     }
 
+    public static byte byteCopy(int src, int srcposition, byte destination, int destposition, int length) {
+        byte temp = destination;
+        for(int i = 0; i < length; i++) {
+            temp = setBitAtPosition(temp, i+destposition,getBitAtPosition(src,i + srcposition));
+        }
+        return temp;
+    }
+
     public static byte getValueFromBits(byte src, int position, int length) {
         byte temp = 0;
         return byteCopy(src,position,temp,0,length);
     }
 
+    public static byte[] intToBytes(int src) {
+        byte[] res = new byte[2];
+
+        res[0] = byteCopy(src,0,res[0],0,8);
+        res[1] = byteCopy(src,8,res[1],0,8);
+
+        return res;
+    }
 }
