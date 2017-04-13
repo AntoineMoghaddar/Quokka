@@ -2,6 +2,8 @@ package Network;
 
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by Rick on 9-4-2017.
@@ -83,5 +85,12 @@ public class Receiver implements Runnable {
         }
 
 
+    }
+
+    public String messageTemplate(String text){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String newText = "user: " + text + " at: " +sdf.format(cal.getTime());
+        return newText;
     }
 }
