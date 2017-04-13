@@ -52,7 +52,6 @@ public class Sender implements Runnable {
             int msgLength;
 
             while (true) {
-                //sendFile(socket, address);
                 if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
                     previousSendTime = System.currentTimeMillis();//possible slight delay
@@ -84,12 +83,11 @@ public class Sender implements Runnable {
     private void sendFile(MulticastSocket socket, InetAddress group) {
         File test = new File("userlist.txt");
         Path path = test.toPath();
-        int sendSize = 128; //byte send capacity
+        int sendSize = 256; //byte send capacity
         int numPack = 0;
         try {
             byte[] fileArray = Files.readAllBytes(path);
-            byte[] buf = new byte[fileArray.length + 5];
-            System.out.println("" + fileArray + " Size; " + fileArray.length);
+            int fileSize = fileArray.length;
             if((numPack = fileArray.length / sendSize) == 0){
                 numPack = 1;
             }else{
@@ -97,7 +95,8 @@ public class Sender implements Runnable {
             }
             for(int seq = 0; seq <= numPack; seq++){
                 fileArray = Files.readAllBytes(path);
-                buf = new byte[fileArray.length + 5];
+                byte[] buf = new byte[fileArray.length + 6];
+                System.arraycopy(fileArray, 0, buf, 6, fileSize);
                 buf[0] = (byte) 4;
                 byte[] bufSeq = ByteHandler.intToBytes(seq);
                 buf[1] = bufSeq[0];
@@ -105,6 +104,7 @@ public class Sender implements Runnable {
                 byte[] bufNum = ByteHandler.intToBytes(numPack);
                 buf[3] = bufNum[0];
                 buf[4] = bufNum[1];
+                buf[5] = (byte)fileSize;
                 if(seq == 0 && numPack == 1){
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
@@ -132,4 +132,5 @@ public class Sender implements Runnable {
             e.printStackTrace();
         }
     }
+
 }
