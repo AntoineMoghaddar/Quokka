@@ -1,4 +1,4 @@
-package Design;
+package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
 
 /**
  * Created by Antoine Moghaddar on 30-1-2016.

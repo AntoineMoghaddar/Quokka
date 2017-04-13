@@ -1,5 +1,6 @@
-package Design;
+package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
 
+import Design.Logger;
 import Helperclasses.Exceptions.LineException;
 
 import java.io.*;
