@@ -63,7 +63,6 @@ public class Receiver implements Runnable {
             case 2:
                 //ACK packet
             case 4:
-                System.out.println("received file header");
                 receiveFile(socket, receivedPacket);
 
             default:
@@ -79,11 +78,9 @@ public class Receiver implements Runnable {
             int numPack = ((buf[4] & 0xff) << 8) | (buf[3] & 0xff);
             int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
             int bytes = (int) buf[5];
-            System.out.println("packet value : " + Arrays.toString(buf));
             FileOutputStream stream = new FileOutputStream("test1.txt");
             byte[] res = new byte[bytes];
             System.arraycopy(buf, 6, res, 0, bytes);
-            System.out.println("after copy : " + Arrays.toString(res));
             stream.write(res);
             stream.flush();
             stream.close();

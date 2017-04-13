@@ -52,7 +52,6 @@ public class Sender implements Runnable {
             int msgLength;
 
             while (true) {
-               //sendFile(socket, address);
                 if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
                     previousSendTime = System.currentTimeMillis();//possible slight delay
@@ -109,7 +108,6 @@ public class Sender implements Runnable {
                 if(seq == 0 && numPack == 1){
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
-                    System.out.println("File values : " + Arrays.toString(buf));
                 } else if(seq == 0 && numPack != 1){
                     byte[] cutArray = Arrays.copyOfRange(buf, 0, sendSize);// might have to be +1
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
