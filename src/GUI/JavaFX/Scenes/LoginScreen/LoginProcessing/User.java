@@ -5,23 +5,30 @@ package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
  */
 public class User {
 
-    private String gender;
-    private String username;
-    private String email;
-    private String password;
+    private String gender, key, username, email, password;
 
-    //only used for logiing in
+    //only used for logging in
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
     //this constructor is only used for registering
-    public User(String username, String password, String email, String gender) {
-
+    public User(String username, String password, String email, String gender, String key) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.gender = gender;
+        this.key = key;
+    }
+
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public String getPassword() {
@@ -40,7 +47,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "gender='" + gender + '\'' +
+                ", key='" + key + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

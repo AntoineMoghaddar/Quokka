@@ -1,5 +1,6 @@
 package GUI.JavaFX.Scenes.RegisterScreen;
 
+import Design.Logger;
 import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.Login_Process;
 import GUI.Singleton_manager.ClassManager;
 import javafx.beans.binding.Bindings;
@@ -12,7 +13,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import sun.rmi.runtime.Log;
 
 import java.net.URL;
 import java.util.Objects;
@@ -33,7 +33,7 @@ public class RegisterScreenController implements Initializable{
     private RadioButton maleButton, femaleButton, helicopterbutton;
 
     @FXML
-    private TextField registerUsername;
+    private TextField registerUsername, registerEmail;
 
     @FXML
     private PasswordField passwordRegister, confirmpasswordRegister;
@@ -55,18 +55,25 @@ public class RegisterScreenController implements Initializable{
                 .otherwise(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY))));
 
 
-        if (registerUsername.getText() != null
-                && passwordRegister.getText() != null
-                && (Objects.equals(passwordRegister.getText(), confirmpasswordRegister.getText()))
-                && acceptRights.isSelected() && (maleButton.isSelected()
-                || femaleButton.isSelected()
-                || helicopterbutton.isSelected())) {
+        confirmRegistrationButton.setOnAction(event -> {
+            Logger.debug("reached register if statement");
+            if (registerUsername.getText() != null
+                    && passwordRegister.getText() != null
+                    && registerEmail.getText() != null
+                    && (Objects.equals(passwordRegister.getText(), confirmpasswordRegister.getText()))
+                    && acceptRights.isSelected() && (maleButton.isSelected()
+                    || femaleButton.isSelected()
+                    || helicopterbutton.isSelected())) {
 
-            confirmpasswordRegister.setOnAction(event -> {
-//                login_process.Register(registerUsername.getText(), )
-            });
+                String secretKey = ("YES" + Math.random() * 10000 + 1);
+                login_process.Register(registerUsername.getText(), login_process.SHA512_encoder(passwordRegister.getText(), secretKey), registerEmail.getText(),
+                        (maleButton.isSelected()) ? maleButton.getText() :
+                                ((femaleButton.isSelected()) ? femaleButton.getText() : helicopterbutton.getText()), secretKey);
+            } else {
+                Logger.err("system was not able to register data");
+            }
+        });
 
-        }
 
     }
 }

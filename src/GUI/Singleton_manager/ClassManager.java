@@ -30,6 +30,8 @@ public class ClassManager {
 
     public static void load(Launcher _launcher){
         login_process = Login_Process.getInstance();
+        new UpdateManager().execute();
+        login_process.readUsersFile("userlist.txt");
         launcher = _launcher;
 
         menuBar = new MenuBar();

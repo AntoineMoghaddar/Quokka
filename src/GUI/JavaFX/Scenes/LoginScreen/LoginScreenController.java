@@ -52,7 +52,9 @@ public class LoginScreenController implements Initializable {
                 .otherwise(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY))));
 
         loginButton.setOnAction(event -> {
-            if (login_process.login(tfUserName.getText(), tfPassword.getText())) {
+            if (login_process.login(tfUserName.getText(),
+                    login_process.SHA512_encoder(tfPassword.getText(),
+                            login_process.getUser(tfUserName.getText()).getKey()))) {
                 Logger.confirm("Login granted");
                 loginconfirmation.setText("LOGIN HAS NOT BEEN APPROVED");
                 loginconfirmation.setTextFill(Color.GREEN);

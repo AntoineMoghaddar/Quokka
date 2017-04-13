@@ -3,16 +3,9 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <VBox fx:id="mainRegister" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
@@ -78,11 +71,13 @@
          <Insets top="10.0" />
       </VBox.margin>
    </HBox>
-   <TextField alignment="CENTER" layoutX="342.0" layoutY="302.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="E-mail Address">
+   <TextField fx:id="registerEmail" alignment="CENTER" layoutX="342.0" layoutY="302.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="E-mail Address">
       <VBox.margin>
          <Insets top="15.0" />
-      </VBox.margin></TextField>
-   <PasswordField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
+      </VBox.margin>
+   </TextField>
+    <PasswordField fx:id="passwordRegister" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                   minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
       <VBox.margin>
          <Insets top="15.0" />
       </VBox.margin>
