@@ -8,15 +8,27 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * @author Moose (Antoine Moghaddar 05/10/2016)
+ * @author Moose
  * This class is meant to process a login request/ register request but also able to read and write data in a textfile, these methods can be used in, for example, JavaFx projects
  */
 public class Login_Process {
     private ArrayList<User> users = new ArrayList<>();
-    private User currentUser;
+    private User currentUser = null;
 
+    private static Login_Process instance;
+
+    private Login_Process() {
+    }
+
+    public static Login_Process getInstance() {
+        if (instance == null) {
+            instance = new Login_Process();
+        }
+        return instance;
+    }
 
     public int readUsersFile(String filename) {
+        Logger.notice("Applied for reading in user list");
         int amountObjects = 0;
         try {
             Scanner fileScanner = new Scanner(new File(filename));
@@ -29,7 +41,7 @@ public class Login_Process {
                         users.add(processLineUserFile(line));
                         amountObjects++;
                     } catch (LineException le) {
-                        System.out.println(le.getMessage() + " on line " + linenumber);
+                        Logger.err(le.getMessage() + " on line " + linenumber);
                     }
                 }
             }
@@ -53,7 +65,7 @@ public class Login_Process {
         } else {
             throw new LineException("Fill in all the blanks");
         }
-
+        Logger.log("User " + newUser.toString() + " processed");
         return newUser;
     }//done
 
@@ -61,7 +73,7 @@ public class Login_Process {
         PrintWriter printWriter;
         Logger.notice("Applied for writing in userfile");
         try {
-            printWriter = new PrintWriter(new FileWriter("users.txt", true));
+            printWriter = new PrintWriter(new FileWriter("messages.txt", true));
             printWriter.write(username + ";" + password + ";" + firstName +  ";" + lastName +  ";" + email + "\n");
             printWriter.flush();
             printWriter.close();
@@ -89,9 +101,8 @@ public class Login_Process {
 
     public boolean login(String username, String password) {
         Logger.notice("User login request");
-
+        readUsersFile("userlist.txt");
         boolean access = false;
-
         if (users.isEmpty()) {
             Logger.confirm("There are no accounts available, please first register  ");
             Logger.err("Login request denied");
@@ -99,7 +110,8 @@ public class Login_Process {
 
             for (User user : users) {
                 if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                    currentUser = new User(user.getUsername(), user.getPassword());
+                    currentUser = user;
+//                    = new User(user.getUsername(), user.getPassword());
                     access = true;
                     Logger.confirm("Login request accepted " + username + " logged in");
                     break;
@@ -128,5 +140,13 @@ public class Login_Process {
         for (User user : users) {
             System.out.println(user.toString());
         }
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser() {
+        this.currentUser = null;
     }
 }

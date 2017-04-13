@@ -1,27 +1,72 @@
 package GUI.JavaFX.Scenes.RegisterScreen;
 
+import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.Login_Process;
+import GUI.Singleton_manager.ClassManager;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import sun.rmi.runtime.Log;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
- * Created by Brent Verharen on 11/04/2017.
+ * @author Moose
  */
 public class RegisterScreenController implements Initializable{
+
     @FXML
-    private Button button;
+    private VBox mainRegister;
+
     @FXML
-    private TextField username;
+    private MenuBar menuBar;
+
     @FXML
-    private PasswordField password;
+    private RadioButton maleButton, femaleButton, helicopterbutton;
+
+    @FXML
+    private TextField registerUsername;
+
+    @FXML
+    private PasswordField passwordRegister, confirmpasswordRegister;
+
+    @FXML
+    private CheckBox acceptRights;
+
+    @FXML
+    private Button confirmRegistrationButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Login_Process login_process = Login_Process.getInstance();
+        menuBar.getMenus().setAll(ClassManager.getMenuBar().getMenus());
+        ToggleButton toggle = new ToggleButton("Toggle color");
+
+        mainRegister.backgroundProperty().bind(Bindings.when(toggle.selectedProperty())
+                .then(new Background(new BackgroundFill(Color.CORNFLOWERBLUE, CornerRadii.EMPTY, Insets.EMPTY)))
+                .otherwise(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY))));
+
+
+        if (registerUsername.getText() != null
+                && passwordRegister.getText() != null
+                && (Objects.equals(passwordRegister.getText(), confirmpasswordRegister.getText()))
+                && acceptRights.isSelected() && (maleButton.isSelected()
+                || femaleButton.isSelected()
+                || helicopterbutton.isSelected())) {
+
+            confirmpasswordRegister.setOnAction(event -> {
+//                login_process.Register(registerUsername.getText(), )
+            });
+
+        }
 
     }
 }

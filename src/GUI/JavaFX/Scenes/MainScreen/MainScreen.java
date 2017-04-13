@@ -1,4 +1,4 @@
-package GUI.JavaFX.Scenes.RegisterScreen;
+package GUI.JavaFX.Scenes.MainScreen;
 
 import Design.Logger;
 import GUI.JavaFX.Buildable;
@@ -10,10 +10,11 @@ import java.io.IOException;
 /**
  * @author Moose.
  */
-public class RegisterScreen implements Buildable {
+public class MainScreen implements Buildable {
+
     @Override
     public Parent getScreen() throws IOException {
-        Logger.notice("reached RegisterScreen Build");
-        return FXMLLoader.load(getClass().getResource("RegisterScreenScreen.fxml"));
+        Logger.confirm("Entered MainScreen");
+        return FXMLLoader.load(getClass().getResource("MainScreenScreen.fxml"));
     }
 }

@@ -14,7 +14,7 @@ public class MessageExporter {
 
         List<Message> results = ClassManager.getLauncher().getMessages();
 
-        PrintWriter printWriter = new PrintWriter(new File("results.txt"));
+        PrintWriter printWriter = new PrintWriter(new File("messages.txt"));
 
         for (Message r : results) {
 

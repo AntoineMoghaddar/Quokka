@@ -64,7 +64,7 @@ public class Launcher extends Application {
         primaryStage.setTitle("Quokka Network");
 
         setScreen(ClassManager.getWelcomeSplash().getScreen());
-        primaryStage.setResizable(true);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

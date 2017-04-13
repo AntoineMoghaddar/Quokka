@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -32,23 +33,24 @@
          <Font name="Comic Sans MS Bold Italic" size="19.0" />
       </font>
    </Text>
-   <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Username">
+   <TextField fx:id="tfUserName" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Username">
       <VBox.margin>
          <Insets top="10.0" />
       </VBox.margin></TextField>
-   <PasswordField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
+   <PasswordField fx:id="tfPassword" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
       <VBox.margin>
          <Insets top="15.0" />
       </VBox.margin></PasswordField>
+   <Label fx:id="loginconfirmation"/>
    <HBox alignment="CENTER" prefHeight="0.0" prefWidth="431.0">
       <children>
-         <Button mnemonicParsing="false" text="Login">
+         <Button fx:id="loginButton" mnemonicParsing="false" text="Login">
             <HBox.margin>
                <Insets right="14.0" />
             </HBox.margin>
          </Button>
          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Or" />
-         <Button alignment="CENTER" mnemonicParsing="false" text="Register">
+         <Button fx:id="registerButton" alignment="CENTER" mnemonicParsing="false" text="Register">
             <HBox.margin>
                <Insets left="14.0" />
             </HBox.margin></Button>

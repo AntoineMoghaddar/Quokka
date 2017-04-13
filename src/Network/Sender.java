@@ -83,7 +83,7 @@ public class Sender implements Runnable {
     }
 
     private void sendFile(MulticastSocket socket, InetAddress group) {
-        File test = new File("messages.txt");
+        File test = new File("userlist.txt");
         Path path = test.toPath();
         int sendSize = 128; //byte send capacity
         int numPack = 0;

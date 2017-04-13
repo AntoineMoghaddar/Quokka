@@ -5,8 +5,7 @@ package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
  */
 public class User {
 
-    private String firstName;
-    private String lastName;
+    private String gender;
     private String username;
     private String email;
     private String password;
@@ -18,9 +17,8 @@ public class User {
     }
 
     //this constructor is only used for registering
-    public User(String firstName, String lastName, String username, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String username, String password, String email, String gender) {
+
         this.username = username;
         this.email = email;
         this.password = password;
@@ -30,13 +28,6 @@ public class User {
         return password;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
 
     public String getUsername() {
         return username;

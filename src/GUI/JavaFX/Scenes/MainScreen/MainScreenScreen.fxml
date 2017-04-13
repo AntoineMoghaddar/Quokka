@@ -15,11 +15,15 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="BOTTOM_CENTER" prefHeight="750.0" prefWidth="850.0" stylesheets="@../../../../GUI/StyleSheets/main.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplashController">
+<VBox alignment="BOTTOM_CENTER" prefHeight="750.0" prefWidth="850.0"
+       xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="GUI.JavaFX.Scenes.MainScreen.MainScreenController">
     <opaqueInsets>
         <Insets />
     </opaqueInsets>
-   <HBox prefHeight="690.0" prefWidth="850.0">
+    <MenuBar fx:id="menuBar" />
+
+    <HBox prefHeight="690.0" prefWidth="850.0">
       <children>
          <ListView prefHeight="500.0" prefWidth="208.0" />
          <VBox prefHeight="200.0" prefWidth="650.0">
