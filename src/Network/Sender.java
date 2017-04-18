@@ -56,7 +56,7 @@ public class Sender implements Runnable {
                 if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
                     previousSendTime = System.currentTimeMillis();//possible slight delay
-                    socket.send(new DatagramPacket(routing.generateRoutingData(), routing.getRoutingDataSize(), address, PORT));
+                    socket.send(new DatagramPacket(routing.generateConnectedClientsData(), routing.getConnectedClientsDataSize(), address, PORT));
                 }
 
                 msg = scan.nextLine();

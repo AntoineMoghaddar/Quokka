@@ -3,7 +3,6 @@ package Network;
 import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -59,8 +58,8 @@ public class Receiver implements Runnable {
                 System.out.println("From " + receivedPacket.getAddress() + " Msg : " + msg);
                 break;
             case 1:
-                // Routing Packet
-                routing.updateRoute(receivedPacket.getData(), receivedPacket.getAddress());
+                // Routing_Obsolete Packet
+                routing.updateForwarding(receivedPacket.getData(), receivedPacket.getAddress());
                 break;
             case 2:
                 //ACK packet
