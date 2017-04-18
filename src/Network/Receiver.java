@@ -17,6 +17,8 @@ public class Receiver implements Runnable {
         routing = _routing;
     }
 
+    private byte[] file;
+
     public void run() {
 
         MulticastSocket socket = null;
@@ -75,15 +77,32 @@ public class Receiver implements Runnable {
     private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
         try {
             byte[] buf = packet.getData();
+            byte[] res = null;
+
             int numPack = ((buf[4] & 0xff) << 8) | (buf[3] & 0xff);
             int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
-            int bytes = (int) buf[5];
-            FileOutputStream stream = new FileOutputStream("test1.txt");
-            byte[] res = new byte[bytes];
-            System.arraycopy(buf, 6, res, 0, bytes);
-            stream.write(res);
-            stream.flush();
-            stream.close();
+            int bytes = ((buf[6] & 0xff) << 8) | (buf[5] & 0xff);
+            System.out.println("bytes " + bytes);
+            FileOutputStream stream = new FileOutputStream("test2.txt");
+            System.out.println("seq = " + seq);
+                if(seq < numPack) {
+                    if (seq == 0) {
+                        file = new byte[bytes];
+                        System.arraycopy(buf, 7, file, 0, bytes);
+                        return;
+                    } else {
+                        res = new byte[file.length];
+                        System.arraycopy(file, 0, res, 0, file.length);
+                        file = new byte[res.length + bytes];
+                        System.arraycopy(res, 0, file, 0, res.length);
+                        System.arraycopy(file, res.length, buf, 7, bytes);
+                        return;
+                    }
+                }else {
+                    stream.write(file);
+                    stream.flush();
+                    stream.close();
+                }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -101,4 +120,5 @@ public class Receiver implements Runnable {
         String newText = "user: " + text + " at: " +sdf.format(cal.getTime());
         return newText;
     }
+
 }
