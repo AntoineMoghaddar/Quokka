@@ -17,13 +17,13 @@ public class TCPHandler {
     private final int  retransmitSpeed = 2;
 
     //Keeps track of this clients ACK number
-    private byte ackNumber = 0;
+    private int ackNumber = 0;
 
     // Map of ACKs it expects from a certain InetAddress
-    private HashMap<InetAddress, ArrayList<Byte>> ackExpected = new HashMap<>();
+    private HashMap<InetAddress, ArrayList<Integer>> ackExpected = new HashMap<>();
 
     // Map of ACKs it has received from a certain InetAddress, this is used to ask for retransmissions and ignoring duplicate packets
-    private HashMap<InetAddress, ArrayList<Byte>> ackReceived = new HashMap<>();
+    private HashMap<InetAddress, ArrayList<Integer>> ackReceived = new HashMap<>();
 
     public TCPHandler(Receiver owner) { owningReceiver = owner; }
 
@@ -31,9 +31,9 @@ public class TCPHandler {
     public void packetSent(){
         //Add previous ackNumber to list of expected Acks for all destinations
         // @TODO: Check if list actually changes in for each loop
-        for(List<Byte> list : ackExpected.values()) {
-            if(list.indexOf((byte) (ackNumber-1))==-1) { // Check if it is not already in the list
-                list.add((byte) (ackNumber-1));
+        for(List<Integer> list : ackExpected.values()) {
+            if(list.indexOf(ackNumber-1)==-1) { // Check if it is not already in the list
+                list.add(ackNumber-1);
             }
         }
     }
@@ -41,10 +41,10 @@ public class TCPHandler {
     // Call this after getAckNumber() and when a packet is sent to a single destination
     public void packetSent(InetAddress destination) {
         //Add previous ackNumber to list of expected Acks for this destination
-        int index = ackExpected.get(destination).indexOf((byte) (ackNumber-1));
+        int index = ackExpected.get(destination).indexOf(ackNumber-1);
         if(index == -1) {
             // Only add ackNumber-1 to the list if its not already in the list
-            ackExpected.get(destination).add((byte) (ackNumber - 1));
+            ackExpected.get(destination).add(ackNumber - 1);
         }
     }
 
@@ -73,11 +73,21 @@ public class TCPHandler {
         return false;
     }
 
+    // Checks if this specific ackNumber needs to be resent, called from TCPTimerTask
+    public boolean needsRetransmit(int ackToCheck) {
+        for(List<Integer> list : ackReceived.values()) {
+            if(!list.contains(ackToCheck)) {
+                // list does not contain the ack
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Returns the ackNumber for the next packet
-    public byte getAckNumber() {
+    public int getAckNumber() {
         ackNumber++;
-        return (byte) --ackNumber;
+        return --ackNumber;
     }
 
 }
