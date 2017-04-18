@@ -29,8 +29,6 @@ public class Sender implements Runnable {
 
     private static final int PORT = 8888;
 
-    private boolean allowedToSend = true;
-
     public void run() {
 
         MulticastSocket socket = null;
