@@ -64,7 +64,7 @@ public class Routing {
 
     // Returns the addresses a packet from source needs to be forwarded to
     // Return null if there is none
-    public ArrayList<InetAddress> ForwardAddresses(InetAddress source) {
+    public ArrayList<InetAddress> forwardAddresses(InetAddress source) {
         if(ForwardingTable.containsKey(source)){
             return ForwardingTable.get(source);
         } else {
