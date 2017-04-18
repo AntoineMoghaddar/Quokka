@@ -29,13 +29,16 @@ public class Sender implements Runnable {
 
     private static final int PORT = 8888;
 
+    private int counter;
+
+    int sendMax = 256;
+
     public void run() {
 
         MulticastSocket socket = null;
         DatagramPacket sendPack = null;
         Scanner scan = new Scanner(System.in);
         byte[] outBuf;
-
         InetAddress ip;
 
 
@@ -65,7 +68,7 @@ public class Sender implements Runnable {
                 System.arraycopy(msg.getBytes(), 0, outBuf, 1, msgLength);
                 sendPack = new DatagramPacket(outBuf, msgLength + 1, address, PORT);
 
-                sendPacket(socket, sendPack);
+                sendPacket(socket, sendPack, ip);
 
                 System.out.println(name + " : " + msg);
                 try {
@@ -78,8 +81,29 @@ public class Sender implements Runnable {
         }
     }
 
-    public void sendPacket(MulticastSocket socket, DatagramPacket packet){
+    public void sendPacket(MulticastSocket socket, DatagramPacket packet, InetAddress ip){
         try {
+            // [0] packet type, [1][2] seq, [3][4] total packets, [5][6] amount of data bytes, [7-10] address
+            byte[] buf = packet.getData();
+            byte[] res = new byte[buf.length + 11];
+            res[0] = 4;
+            byte[] seq = ByteHandler.intToBytes(counter);
+            res[1] = seq[0];
+            res[2] = seq[1];
+            int fileSize = res.length/sendMax;
+            byte[] numPack = ByteHandler.intToBytes(fileSize);
+            res[3] = numPack[0];
+            res[4] = numPack[1];
+            byte[] bytes = ByteHandler.intToBytes(buf.length);
+            res[5] = bytes[0];
+            res[6] = bytes[1];
+            byte[] ipAddress = ip.getAddress();
+            res[7] = ipAddress[0];
+            res[8] = ipAddress[1];
+            res[9] = ipAddress[2];
+            res[10] = ipAddress[3];
+            System.out.println(ip.toString());
+
             socket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();
