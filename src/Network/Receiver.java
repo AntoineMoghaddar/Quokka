@@ -73,10 +73,10 @@ public class Receiver implements Runnable {
             case 0:
                 // Message
                 String msg = new String(receivedPacket.getData(), 1, receivedPacket.getLength() - 1);
-                System.out.println("From " + receivedPacket.getAddress() + " Msg : " + msg);
+                System.out.println("From " + originalSource + " Msg : " + msg);
                 break;
             case 1:
-                // Routing_Obsolete Packet
+                // Routing
                 routing.updateForwarding(receivedPacket.getData(), receivedPacket.getAddress());
                 break;
             case 2:
