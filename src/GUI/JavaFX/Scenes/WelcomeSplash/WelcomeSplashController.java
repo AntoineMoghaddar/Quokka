@@ -2,8 +2,8 @@ package GUI.JavaFX.Scenes.WelcomeSplash;
 
 import Design.Logger;
 import GUI.JavaFX.Launcher;
+import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.Login_Process;
 import GUI.Singleton_manager.ClassManager;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
@@ -20,12 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author Moose.
@@ -43,6 +40,7 @@ public class WelcomeSplashController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Login_Process login_process = Login_Process.getInstance();
         menuBar.getMenus().setAll(ClassManager.getMenuBar().getMenus());
         ToggleButton toggle = new ToggleButton("Toggle color");
 
@@ -55,10 +53,26 @@ public class WelcomeSplashController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2),event -> {
             Logger.notice("Reached Controller Splash -> +2 seconds");
             Logger.confirm("RUNNING MIRIO SWITCH -> LoginScreen");
-            try {
-                Launcher.setScreen(ClassManager.getLoginScreen().getScreen());
-            } catch (IOException ex) {
-                ex.printStackTrace();
+
+
+            Logger.confirm("Current User: " + ((login_process.getCurrentUser() != null) ? login_process.getCurrentUser().toString() : "null"));
+
+            if (login_process.getCurrentUser() == null) {
+                try {
+                    Logger.notice("user is null" +
+                            "\nEntering Login Screen");
+                    Launcher.setScreen(ClassManager.getLoginScreen().getScreen());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                try {
+                    Logger.notice("User " + login_process.getCurrentUser() + "is already logged in" +
+                            "\nEntering main screen");
+                    Launcher.setScreen(ClassManager.getMainScreen().getScreen());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }));
 

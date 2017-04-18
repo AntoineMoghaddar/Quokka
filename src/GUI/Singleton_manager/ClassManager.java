@@ -2,7 +2,10 @@ package GUI.Singleton_manager;
 
 import Design.Logger;
 import GUI.JavaFX.Launcher;
+import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.Login_Process;
 import GUI.JavaFX.Scenes.LoginScreen.LoginScreen;
+import GUI.JavaFX.Scenes.MainScreen.MainScreen;
+import GUI.JavaFX.Scenes.RegisterScreen.RegisterScreen;
 import GUI.JavaFX.Scenes.WelcomeSplash.WelcomeSplash;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -18,19 +21,17 @@ public class ClassManager {
     private static Launcher launcher;
     private static WelcomeSplash welcomeSplash;
     private static LoginScreen loginScreen;
-//    private static CalculationScreen calculationScreen;
-//    private static OpenScreen openScreen;
-//    private static AdminScreen adminScreen;
-//    private static StepScreen stepScreen;
-//    private static SaveBox saveBox;
+    private static MainScreen mainScreen;
+    private static Login_Process login_process;
 
+    private static RegisterScreen registerScreen;
     private static MenuBar menuBar;
-//
-//    private static ChainAPL chainAPL;
-//    private static ChainController chainController;
+
 
     public static void load(Launcher _launcher){
-
+        login_process = Login_Process.getInstance();
+        new UpdateManager().execute();
+        login_process.readUsersFile("userlist.txt");
         launcher = _launcher;
 
         menuBar = new MenuBar();
@@ -39,17 +40,19 @@ public class ClassManager {
 
         welcomeSplash = new WelcomeSplash();
         loginScreen = new LoginScreen();
-//
-//        chainAPL = new ChainAPL();
-//        chainController = new ChainController();
+        mainScreen = new MainScreen();
+        registerScreen = new RegisterScreen();
     }
 
     private static Menu[] getDefaultMenuItems(){
 
-        Menu navigation = new Menu("Navigatie");
-        MenuItem mainMenu = new MenuItem("Hoofdmenu");
+        Menu navigation = new Menu("Navigation");
+        MenuItem mainMenu = new MenuItem("Main Menu");
         MenuItem stroke = new SeparatorMenuItem();
-        MenuItem exit = new MenuItem("Verlaat programma");
+        MenuItem stroke2 = new SeparatorMenuItem();
+        MenuItem logout = new MenuItem("Logout");
+        MenuItem exit = new MenuItem("Exit");
+
 
         mainMenu.setOnAction(e -> {
             try {
@@ -59,10 +62,16 @@ public class ClassManager {
             }
         });
 
-
         exit.setOnAction(e -> Launcher.close());
-
-        navigation.getItems().addAll(mainMenu, stroke, exit);
+        logout.setOnAction(event -> {
+            login_process.setCurrentUser();
+            try {
+                Launcher.setScreen(ClassManager.getWelcomeSplash().getScreen());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        navigation.getItems().addAll(mainMenu, stroke, logout, stroke2, exit);
 
         Menu help = new Menu("Help");
         MenuItem about = new MenuItem("About Quokka");
@@ -124,4 +133,13 @@ public class ClassManager {
     public static LoginScreen getLoginScreen() {
         return loginScreen;
     }
+
+    public static MainScreen getMainScreen() {
+        return mainScreen;
+    }
+
+    public static RegisterScreen getRegisterScreen() {
+        return registerScreen;
+    }
 }
+

@@ -1,42 +1,40 @@
-package Design;
+package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
 
 /**
  * Created by Antoine Moghaddar on 30-1-2016.
  */
 public class User {
 
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String email;
-    private String password;
+    private String gender, key, username, email, password;
 
-    //only used for logiing in
+    //only used for logging in
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
     //this constructor is only used for registering
-    public User(String firstName, String lastName, String username, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String username, String password, String email, String gender, String key) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.gender = gender;
+        this.key = key;
+    }
+
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
 
     public String getUsername() {
         return username;
@@ -49,7 +47,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "gender='" + gender + '\'' +
+                ", key='" + key + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

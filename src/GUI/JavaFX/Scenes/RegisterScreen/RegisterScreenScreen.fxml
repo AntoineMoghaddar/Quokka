@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.image.Image?>
@@ -8,15 +8,19 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<VBox fx:id="mainRegister" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity"
       prefHeight="613.0" prefWidth="431.0"
       xmlns="http://javafx.com/javafx/8.0.112"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.JavaFX.Scenes.RegisterScreen.RegisterScreenController">
+
     <opaqueInsets>
         <Insets />
     </opaqueInsets>
-    <MenuBar fx:id="menu" />
-    <ImageView fitHeight="215.0" fitWidth="342.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="">
+
+    <MenuBar fx:id="menuBar"/>
+
+    <ImageView fx:id="ImageRegisterScreen" fitHeight="215.0" fitWidth="342.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="">
         <Image url="@../../img.png" />
         <VBox.margin>
             <Insets top="40.0" />
@@ -25,58 +29,78 @@
             <Cursor fx:constant="DEFAULT" />
         </cursor>
     </ImageView>
-   <Text fill="#e62032" strokeType="OUTSIDE" strokeWidth="0.0" text="Quokka 0.1 alpha">
+
+    <Text fill="#e62032" strokeType="OUTSIDE" strokeWidth="0.0" text="Quokka 0.1 alpha">
       <font>
          <Font name="Comic Sans MS Bold Italic" size="19.0" />
       </font>
-   </Text>
-   <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Username">
+    </Text>
+
+    <TextField fx:id="registerUsername" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+               promptText="Username">
       <VBox.margin>
          <Insets top="10.0" />
       </VBox.margin>
-   </TextField>
-   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gender:" wrappingWidth="51.767578125">
+    </TextField>
+
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gender:" wrappingWidth="51.767578125">
       <VBox.margin>
          <Insets top="10.0" />
       </VBox.margin>
-   </Text>
-   <HBox alignment="CENTER" prefHeight="10.0" prefWidth="431.0">
+    </Text>
+
+    <HBox alignment="CENTER" prefHeight="10.0" prefWidth="431.0">
       <children>
-         <RadioButton mnemonicParsing="false" text="Male">
+
+          <RadioButton fx:id="maleButton" mnemonicParsing="false" text="Male">
             <HBox.margin>
                <Insets right="15.0" />
             </HBox.margin>
-         </RadioButton>
-         <RadioButton mnemonicParsing="false" text="Female">
+          </RadioButton>
+
+          <RadioButton fx:id="femaleButton" mnemonicParsing="false" text="Female">
             <HBox.margin>
                <Insets right="15.0" />
             </HBox.margin>
-         </RadioButton>
-         <RadioButton mnemonicParsing="false" text="Apache Helicopter" />
+          </RadioButton>
+
+          <RadioButton fx:id="helicopterbutton" mnemonicParsing="false" text="Apache Helicopter" />
+
       </children>
       <VBox.margin>
          <Insets top="10.0" />
       </VBox.margin>
    </HBox>
-   <PasswordField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
+   <TextField fx:id="registerEmail" alignment="CENTER" layoutX="342.0" layoutY="302.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="E-mail Address">
       <VBox.margin>
          <Insets top="15.0" />
       </VBox.margin>
-   </PasswordField>
-     <PasswordField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Re-enter Password">
+   </TextField>
+    <PasswordField fx:id="passwordRegister" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                   minHeight="-Infinity" minWidth="-Infinity" promptText="Password">
       <VBox.margin>
          <Insets top="15.0" />
       </VBox.margin>
-   </PasswordField>
-   <CheckBox mnemonicParsing="false" text="I have read and agree with the terms of service">
+    </PasswordField>
+
+    <PasswordField fx:id="confirmpasswordRegister" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="Confirm Password">
       <VBox.margin>
          <Insets top="15.0" />
       </VBox.margin>
-   </CheckBox>
-   <Button mnemonicParsing="false" text="Register">
+    </PasswordField>
+
+    <CheckBox fx:id="acceptRights" mnemonicParsing="false" text="I have read and agree with the terms of service">
       <VBox.margin>
          <Insets top="15.0" />
-      </VBox.margin></Button>
-   <Text strokeType="OUTSIDE" strokeWidth="0.0" />
+      </VBox.margin>
+    </CheckBox>
+
+    <Button fx:id="confirmRegistrationButton" mnemonicParsing="false" text="Register">
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin>
+    </Button>
+
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" />
 
 </VBox>

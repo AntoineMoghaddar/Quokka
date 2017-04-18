@@ -1,21 +1,37 @@
-package Design;
+package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
 
+import Design.Logger;
 import Helperclasses.Exceptions.LineException;
+import org.apache.commons.codec.binary.Hex;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * @author Moose (Antoine Moghaddar 05/10/2016)
+ * @author Moose
  * This class is meant to process a login request/ register request but also able to read and write data in a textfile, these methods can be used in, for example, JavaFx projects
  */
 public class Login_Process {
     private ArrayList<User> users = new ArrayList<>();
-    private User currentUser;
+    private User currentUser = null;
 
+    private static Login_Process instance;
+
+    private Login_Process() {
+    }
+
+    public static Login_Process getInstance() {
+        if (instance == null) {
+            instance = new Login_Process();
+        }
+        return instance;
+    }
 
     public int readUsersFile(String filename) {
+        Logger.notice("Applied for reading in user list");
         int amountObjects = 0;
         try {
             Scanner fileScanner = new Scanner(new File(filename));
@@ -28,13 +44,13 @@ public class Login_Process {
                         users.add(processLineUserFile(line));
                         amountObjects++;
                     } catch (LineException le) {
-                        System.out.println(le.getMessage() + " on line " + linenumber);
+                        Logger.err(le.getMessage() + " on line " + linenumber);
                     }
                 }
             }
             Logger.confirm("Read in " + amountObjects + " objects");
         } catch (FileNotFoundException fnf) {
-            System.out.println();
+            fnf.printStackTrace();
         }
         return amountObjects;
     }
@@ -47,21 +63,20 @@ public class Login_Process {
         }
 
         if (lineData.length >= 2) {
-
-            newUser = new User(lineData[0], lineData[1]);
+                        newUser = new User(lineData[0], lineData[1], lineData[2], lineData[3], lineData[4]);
         } else {
             throw new LineException("Fill in all the blanks");
         }
-
+        Logger.log("User " + newUser.toString() + " processed");
         return newUser;
     }//done
 
-    public void fileWriter(String username, String password, String firstName, String lastName, String email) {
+    public void fileWriter(String username, String password, String email, String gender, String key) {
         PrintWriter printWriter;
-        Logger.notice("Applied for writing in userfile");
+        Logger.notice("Applied for writing in messages.txt");
         try {
-            printWriter = new PrintWriter(new FileWriter("users.txt", true));
-            printWriter.write(username + ";" + password + ";" + firstName +  ";" + lastName +  ";" + email + "\n");
+            printWriter = new PrintWriter(new FileWriter("userlist.txt", true));
+            printWriter.write(username + ";" + password + ";" + email + ";" + gender + ";" + key + "\n");
             printWriter.flush();
             printWriter.close();
 
@@ -70,14 +85,16 @@ public class Login_Process {
         }
     }
 
-    public boolean Register(String firstname, String lastName, String username, String email, String password) {
+    public boolean Register(String username, String password, String email, String gender, String key) {
         boolean notaccessed;
 
-        User newUser = new User(firstname, lastName, username, email, password);
+        User newUser = new User(username, password, email, gender, key);
 
         if (!checkValidRegister(newUser.getUsername())) {
             users.add(newUser);
-            fileWriter(username, password, firstname, lastName, email);
+            Logger.notice("started writing in file");
+            fileWriter(username, password, email, gender, key);
+
             notaccessed = false;
         } else {
             Logger.err("Try again");
@@ -88,9 +105,8 @@ public class Login_Process {
 
     public boolean login(String username, String password) {
         Logger.notice("User login request");
-
+        readUsersFile("userlist.txt");
         boolean access = false;
-
         if (users.isEmpty()) {
             Logger.confirm("There are no accounts available, please first register  ");
             Logger.err("Login request denied");
@@ -98,7 +114,8 @@ public class Login_Process {
 
             for (User user : users) {
                 if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                    currentUser = new User(user.getUsername(), user.getPassword());
+                    currentUser = user;
+//                    = new User(user.getUsername(), user.getPassword());
                     access = true;
                     Logger.confirm("Login request accepted " + username + " logged in");
                     break;
@@ -123,9 +140,48 @@ public class Login_Process {
         return exists;
     }
 
+    public User getUser(String username) {
+        for (User user : users) {
+            return (user.getUsername().equals(username)) ? user : null;
+        }
+        return null;
+    }
+
     public void printusers(){
         for (User user : users) {
-            System.out.println(user.toString());
+            Logger.debug(user.toString());
+        }
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser() {
+        this.currentUser = null;
+    }
+
+    public String SHA512_encoder(String value, String secretkey) {
+        try {
+            // Get an hmac_sha1 secretkey from the raw secretkey bytes
+            byte[] keyBytes = secretkey.getBytes();
+            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA512");
+
+            // Get an hmac_sha512 Mac instance and initialize with the signing secretkey
+            Mac mac = Mac.getInstance("HmacSHA512");
+            mac.init(signingKey);
+
+            // Compute the hmac on input data bytes
+            byte[] rawHmac = mac.doFinal(value.getBytes());
+
+            // Convert raw bytes to Hex
+            byte[] hexBytes = new Hex().encode(rawHmac);
+
+            //  Covert array of Hex bytes to a String
+            Logger.debug("Hashed Password" + new String(hexBytes, "UTF-8"));
+            return new String(hexBytes, "UTF-8");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

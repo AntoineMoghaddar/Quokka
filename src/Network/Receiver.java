@@ -2,6 +2,9 @@ package Network;
 
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
 
 /**
  * Created by Rick on 9-4-2017.
@@ -18,7 +21,7 @@ public class Receiver implements Runnable {
 
         MulticastSocket socket = null;
         DatagramPacket inPacket = null;
-        byte[] inBuf = new byte[1028];
+        byte[] inBuf = new byte[256];
         try {
             //Prepare to join multicast group
             socket = new MulticastSocket(8888);
@@ -60,7 +63,6 @@ public class Receiver implements Runnable {
             case 2:
                 //ACK packet
             case 4:
-                System.out.println("received file header");
                 receiveFile(socket, receivedPacket);
 
             default:
@@ -72,10 +74,17 @@ public class Receiver implements Runnable {
 
     private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
         try {
+            byte[] buf = packet.getData();
+            int numPack = ((buf[4] & 0xff) << 8) | (buf[3] & 0xff);
+            int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
+            int bytes = (int) buf[5];
             FileOutputStream stream = new FileOutputStream("test1.txt");
-            stream.write(packet.getData());
-            System.out.println("data received 1" + packet.getData());
+            byte[] res = new byte[bytes];
+            System.arraycopy(buf, 6, res, 0, bytes);
+            stream.write(res);
+            stream.flush();
             stream.close();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -83,5 +92,13 @@ public class Receiver implements Runnable {
         }
 
 
+    }
+
+
+    public String messageTemplate(String text){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String newText = "user: " + text + " at: " +sdf.format(cal.getTime());
+        return newText;
     }
 }
