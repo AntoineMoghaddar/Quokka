@@ -41,7 +41,6 @@ public class Sender implements Runnable {
 
         try {
             socket = new MulticastSocket(8888);
-            long counter = 0;
             String msg;
             System.out.println("Please enter your username");
             String name = scan.nextLine();
@@ -60,14 +59,13 @@ public class Sender implements Runnable {
                 }
 
                 msg = scan.nextLine();
-                counter++;
                 msgLength = msg.getBytes().length;
                 outBuf = new byte[msgLength + 1];
                 outBuf[0] = 0;//Code used to indicate that this is a message
                 System.arraycopy(msg.getBytes(), 0, outBuf, 1, msgLength);
                 sendPack = new DatagramPacket(outBuf, msgLength + 1, address, PORT);
 
-                socket.send(sendPack);
+                sendPacket(socket, sendPack);
 
                 System.out.println(name + " : " + msg);
                 try {
@@ -77,6 +75,14 @@ public class Sender implements Runnable {
             }
         } catch (IOException ioe) {
             System.out.println(ioe);
+        }
+    }
+
+    public void sendPacket(MulticastSocket socket, DatagramPacket packet){
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

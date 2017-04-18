@@ -14,7 +14,7 @@ public class TCPHandler {
     private Receiver owningReceiver;
 
     // Amount of acks needed to conclude that a packet went missing
-    private final int  retransmitSpeed = 2;
+    private  static final int  RETRANSMITSPEED = 2;
 
     //Keeps track of this clients ACK number
     private int ackNumber = 0;

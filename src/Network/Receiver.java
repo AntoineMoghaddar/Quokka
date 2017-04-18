@@ -10,10 +10,13 @@ import java.util.Calendar;
  */
 public class Receiver implements Runnable {
 
+    private Sender ownSender;
+
     private Routing routing;
 
-    public Receiver(Routing _routing) {
+    public Receiver(Routing _routing, Sender ownSender) {
         routing = _routing;
+        this.ownSender = ownSender;
     }
 
     private byte[] file;
@@ -39,8 +42,7 @@ public class Receiver implements Runnable {
 //                System.err.println("Received " + inPacket.getLength() +
 //                        " bytes from " + inPacket.getAddress());
 //                String msg = new String(inBuf, 0, inPacket.getLength());
-//                System.out.println("From " + inPacket.getAddress() + " Msg : " + msg);
-
+//                System.out.println("From " + inPacket.getAddress() + " Msg : " + msg);s
             }
         } catch (IOException ioe) {
             System.out.println(ioe);
