@@ -110,6 +110,23 @@ public class Sender implements Runnable {
         }
     }
 
+    public void forwardPacket(MulticastSocket socket, DatagramPacket packet, InetAddress originalSource, InetAddress destination) {
+        packet.setAddress(destination);
+        byte[] data = packet.getData();
+        byte[] ipAddress = originalSource.getAddress();
+        data[7] = ipAddress[0];
+        data[8] = ipAddress[1];
+        data[9] = ipAddress[2];
+        data[10] = ipAddress[3];
+        packet.setData(data);
+        try{
+        socket.send(packet);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    }
+
     private void sendFile(MulticastSocket socket, InetAddress group) {
         File test = new File("sneding.test");
         Path path = test.toPath();

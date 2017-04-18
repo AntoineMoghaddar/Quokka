@@ -30,11 +30,6 @@ public class Routing {
     * source : source of the packet
     * */
     public void updateForwarding(byte[] data, InetAddress source) {
-        if(!ConnectedClients.contains(source)) {
-            ConnectedClients.add(source);
-        }
-
-
         ArrayList<InetAddress> hosts = new ArrayList<>();
         for(int i = 0; i < data.length/4; i++) {
             byte[] buf = new byte[4];
@@ -86,6 +81,12 @@ public class Routing {
     }
 
     public int getConnectedClientsDataSize() { return connectedClientsDataSize; }
+
+    public void addConnectedClient(InetAddress source) {
+        if(!ConnectedClients.contains(source)){
+            ConnectedClients.add(source);
+        }
+    }
 
     public int getAckNumber(){
         ackNumber++;

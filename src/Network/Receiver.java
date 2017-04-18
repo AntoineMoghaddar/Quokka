@@ -3,7 +3,10 @@ package Network;
 import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import Helperclasses.ByteHandler;
 
 /**
  * Created by Rick on 9-4-2017.
@@ -50,7 +53,20 @@ public class Receiver implements Runnable {
     }
 
     public void receivePacket(DatagramPacket receivedPacket, MulticastSocket socket) {
-        // Handle Missing packets here
+        // Add the source of receivedPacket to list of ConnectedClients
+        routing.addConnectedClient(receivedPacket.getAddress());
+
+        InetAddress originalSource = ByteHandler.byteToInet(Arrays.copyOfRange(receivedPacket.getData(), 7,10));
+
+        // Forward packet if needed
+        if(!routing.forwardAddresses(originalSource).isEmpty()) {
+            ArrayList<InetAddress> list = routing.forwardAddresses(originalSource);
+            for(InetAddress dest : list) {
+                ownSender.forwardPacket(socket,receivedPacket, originalSource, dest);
+            }
+        }
+
+
 
         // Handle the different types of packets here
         switch (receivedPacket.getData()[0]) {
