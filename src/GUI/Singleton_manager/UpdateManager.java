@@ -2,6 +2,7 @@ package GUI.Singleton_manager;
 
 import Design.Logger;
 import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.Login_Process;
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.Message_Process;
 
 import javax.swing.*;
 
@@ -10,15 +11,15 @@ import javax.swing.*;
  */
 public class UpdateManager extends SwingWorker<Object, Object> {
 
-    private Login_Process login_process;
+    private Message_Process message_process;
 
     @Override
     protected Object doInBackground() throws Exception {
-        login_process = Login_Process.getInstance();
+        message_process = Message_Process.getInstance();
         while (true) {
             java.awt.EventQueue.invokeLater(() -> {
                 Logger.log("updating");
-                login_process.readUsersFile("userlist.txt");
+                message_process.readMessagesFile("messages.txt");
                 // here the swing update
             });
             try {

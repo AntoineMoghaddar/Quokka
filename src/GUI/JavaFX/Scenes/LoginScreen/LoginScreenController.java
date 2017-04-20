@@ -45,23 +45,33 @@ public class LoginScreenController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Login_Process login_process = Login_Process.getInstance();
         ToggleButton toggle = new ToggleButton("Toggle color");
-            menu.getMenus().setAll(ClassManager.getMenuBar().getMenus());
+        menu.getMenus().setAll(ClassManager.getMenuBar().getMenus());
 
         loginBox.backgroundProperty().bind(Bindings.when(toggle.selectedProperty())
                 .then(new Background(new BackgroundFill(Color.CORNFLOWERBLUE, CornerRadii.EMPTY, Insets.EMPTY)))
                 .otherwise(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY))));
 
+
         loginButton.setOnAction(event -> {
-            if (login_process.login(tfUserName.getText(),
-                    login_process.SHA512_encoder(tfPassword.getText(),
-                            login_process.getUser(tfUserName.getText()).getKey()))) {
-                Logger.confirm("Login granted");
-                loginconfirmation.setText("LOGIN HAS NOT BEEN APPROVED");
-                loginconfirmation.setTextFill(Color.GREEN);
-                try {
-                    Launcher.setScreen(ClassManager.getMainScreen().getScreen());
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (!tfUserName.getText().isEmpty() & !tfPassword.getText().isEmpty()) {
+                if (login_process.login(tfUserName.getText(),
+                        login_process.SHA512_encoder(tfPassword.getText(),
+                                login_process.getUser(
+                                        tfUserName
+                                                .getText())
+                                        .getKey()))) {
+                    Logger.confirm("Login granted");
+                    loginconfirmation.setText("LOGIN HAS NOT BEEN APPROVED");
+                    loginconfirmation.setTextFill(Color.GREEN);
+                    try {
+                        Launcher.setScreen(ClassManager.getMainScreen().getScreen());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Logger.err("Access Denied");
+                    loginconfirmation.setText("LOGIN HAS BEEN APPROVED");
+                    loginconfirmation.setTextFill(Color.RED);
                 }
             } else {
                 Logger.err("Access Denied");

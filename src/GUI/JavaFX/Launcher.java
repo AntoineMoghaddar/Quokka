@@ -5,10 +5,12 @@ package GUI.JavaFX;
  */
 
 import Design.Logger;
-import GUI.Main.Message;
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.*;
+import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.*;
 import GUI.Singleton_manager.ClassManager;
 import GUI.io.MessageExporter;
 import GUI.io.MessageImporter;
+import GUI.io.UserImporter;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,6 +28,7 @@ public class Launcher extends Application {
 
     private static Stage current = null;
     private List<Message> messages;
+    private List<User> users;
 
 
     /**
@@ -41,11 +44,12 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Logger.log("Connected to the target VM, address: '127.0.0.1:50101', transport: 'socket'");
         ClassManager.load(this);
 
         try {
             messages = MessageImporter.importMessages();
+            users = UserImporter.importUsers();
+
         } catch (Exception ex) {
             Logger.err(ex.getCause());
             Logger.err("Could not import Messages");
@@ -85,11 +89,13 @@ public class Launcher extends Application {
             return;
         }
 
-        try {
-            MessageExporter.exportResults();
-        } catch (Exception ex) {
-            System.err.println("Could not export results");
-        }
+
+        //TODO This part does not work due to some errors, /However this part should not work since it is rewritten somewhere else
+//        try {
+//            MessageExporter.exportResults();
+//        } catch (Exception ex) {
+//            System.err.println("Could not export results");
+//        }
 
         if (!directEvent)
             getScreen().close();

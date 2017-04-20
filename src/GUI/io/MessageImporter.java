@@ -1,8 +1,6 @@
 package GUI.io;
 
-import Design.Logger;
-import GUI.Main.Message;
-
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,9 @@ public class MessageImporter {
 
             parts[2] = parts[2].replaceAll("±", "\n");
 
-            results.add(new Message(parts[0], parts[2]));
+
+            //TODO Modify this so that it compiles the current settings of messages
+//            results.add(new Message(parts[0], parts[2]));
         }
 
         System.out.println("Imported " + results.size() + " results");

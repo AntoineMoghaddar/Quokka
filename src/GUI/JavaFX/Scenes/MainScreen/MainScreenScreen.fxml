@@ -15,8 +15,9 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
+<?import javafx.scene.control.TextField?>
 <VBox alignment="BOTTOM_CENTER" prefHeight="750.0" prefWidth="850.0"
-       xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI.JavaFX.Scenes.MainScreen.MainScreenController">
     <opaqueInsets>
         <Insets />
@@ -25,19 +26,18 @@
 
     <HBox prefHeight="690.0" prefWidth="850.0">
       <children>
-         <ListView prefHeight="500.0" prefWidth="208.0" />
+         <ListView fx:id="ListViewMain" prefHeight="500.0" prefWidth="208.0" />
          <VBox prefHeight="200.0" prefWidth="650.0">
             <children>
                <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="200.0">
                   <children>
-                     <TextFlow prefHeight="591.0" prefWidth="625.0" />
-                     <ScrollBar orientation="VERTICAL" />
+                     <ListView fx:id="MessageViewList" prefHeight="591.0" prefWidth="625.0" />
                   </children>
                </HBox>
                <HBox prefHeight="100.0" prefWidth="634.0">
                   <children>
-                     <TextArea prefHeight="99.0" prefWidth="573.0" promptText=" Message..." />
-                     <Button mnemonicParsing="false" prefHeight="99.0" prefWidth="74.0" text="Send" />
+                     <TextField fx:id="writeMessage" prefHeight="99.0" prefWidth="573.0" promptText=" Message..." />
+                     <Button fx:id="sendButton" mnemonicParsing="false" prefHeight="99.0" prefWidth="74.0" text="Send" />
                   </children>
                </HBox>
             </children>

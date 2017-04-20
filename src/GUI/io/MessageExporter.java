@@ -1,8 +1,8 @@
 package GUI.io;
 
-import GUI.Main.Message;
 import GUI.Singleton_manager.ClassManager;
 
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;

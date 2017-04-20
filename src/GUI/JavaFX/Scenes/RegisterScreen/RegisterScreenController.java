@@ -1,6 +1,7 @@
 package GUI.JavaFX.Scenes.RegisterScreen;
 
 import Design.Logger;
+import GUI.JavaFX.Launcher;
 import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.Login_Process;
 import GUI.Singleton_manager.ClassManager;
 import javafx.beans.binding.Bindings;
@@ -14,6 +15,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -66,14 +68,25 @@ public class RegisterScreenController implements Initializable{
                     || helicopterbutton.isSelected())) {
 
                 String secretKey = ("YES" + Math.random() * 10000 + 1);
-                login_process.Register(registerUsername.getText(), login_process.SHA512_encoder(passwordRegister.getText(), secretKey), registerEmail.getText(),
+                login_process.Register(
+                        registerUsername.getText(),
+                        login_process.SHA512_encoder(passwordRegister.getText(), secretKey),
+                        registerEmail.getText(),
                         (maleButton.isSelected()) ? maleButton.getText() :
-                                ((femaleButton.isSelected()) ? femaleButton.getText() : helicopterbutton.getText()), secretKey);
+                                ((femaleButton.isSelected()) ? femaleButton.getText() : helicopterbutton.getText()),
+                        secretKey
+                );
+
+//                new UpdateManager().execute();
+
+                try {
+                    Launcher.setScreen(ClassManager.getMainScreen().getScreen());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else {
                 Logger.err("system was not able to register data");
             }
         });
-
-
     }
 }

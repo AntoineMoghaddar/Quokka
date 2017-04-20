@@ -1,6 +1,8 @@
 package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
 
 import Design.Logger;
+import GUI.Main.QuokkaModel;
+import GUI.Singleton_manager.UpdateManager;
 import Helperclasses.Exceptions.LineException;
 import org.apache.commons.codec.binary.Hex;
 
@@ -12,15 +14,22 @@ import java.util.Scanner;
 
 /**
  * @author Moose
- * This class is meant to process a login request/ register request but also able to read and write data in a textfile, these methods can be used in, for example, JavaFx projects
+ * This class is meant to process a login request/ register request but also able to read and write data in a textfile,
+ * these methods can be used in, for example, JavaFx projects
  */
 public class Login_Process {
     private ArrayList<User> users = new ArrayList<>();
     private User currentUser = null;
-
+    private QuokkaModel quokkaModel;
     private static Login_Process instance;
 
+
     private Login_Process() {
+        quokkaModel = QuokkaModel.getInstance();
+        readUsersFile("userlist.txt");
+//        UpdateManager updateManagee = new UpdateManager();
+//        updateManagee.execute();
+
     }
 
     public static Login_Process getInstance() {
@@ -29,6 +38,7 @@ public class Login_Process {
         }
         return instance;
     }
+
 
     public int readUsersFile(String filename) {
         Logger.notice("Applied for reading in user list");
@@ -63,7 +73,7 @@ public class Login_Process {
         }
 
         if (lineData.length >= 2) {
-                        newUser = new User(lineData[0], lineData[1], lineData[2], lineData[3], lineData[4]);
+            newUser = new User(lineData[0], lineData[1], lineData[2], lineData[3], lineData[4]);
         } else {
             throw new LineException("Fill in all the blanks");
         }
@@ -73,10 +83,10 @@ public class Login_Process {
 
     public void fileWriter(String username, String password, String email, String gender, String key) {
         PrintWriter printWriter;
-        Logger.notice("Applied for writing in messages.txt");
+        Logger.notice("Applied for writing in userlist.txt");
         try {
             printWriter = new PrintWriter(new FileWriter("userlist.txt", true));
-            printWriter.write(username + ";" + password + ";" + email + ";" + gender + ";" + key + "\n");
+            printWriter.write(username + ";" + password + ";" + email + ";" + gender + ";" + key + ";\n");
             printWriter.flush();
             printWriter.close();
 
@@ -84,6 +94,7 @@ public class Login_Process {
             Logger.err(file.getMessage());
         }
     }
+
 
     public boolean Register(String username, String password, String email, String gender, String key) {
         boolean notaccessed;
@@ -105,7 +116,6 @@ public class Login_Process {
 
     public boolean login(String username, String password) {
         Logger.notice("User login request");
-        readUsersFile("userlist.txt");
         boolean access = false;
         if (users.isEmpty()) {
             Logger.confirm("There are no accounts available, please first register  ");
@@ -142,11 +152,17 @@ public class Login_Process {
 
     public User getUser(String username) {
         for (User user : users) {
-            return (user.getUsername().equals(username)) ? user : null;
+//            Logger.err(user.toString());
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
         }
         return null;
     }
 
+    /**
+     * @purpose debug
+     */
     public void printusers(){
         for (User user : users) {
             Logger.debug(user.toString());
@@ -157,8 +173,8 @@ public class Login_Process {
         return currentUser;
     }
 
-    public void setCurrentUser() {
-        this.currentUser = null;
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
     public String SHA512_encoder(String value, String secretkey) {
@@ -183,5 +199,17 @@ public class Login_Process {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * @return
+     */
+    public ArrayList<User> getUsers() {
+        Logger.confirm("Apply read in Userlist");
+        for (User user : users) {
+            Logger.notice(user.toString());
+        }
+        return users;
     }
 }

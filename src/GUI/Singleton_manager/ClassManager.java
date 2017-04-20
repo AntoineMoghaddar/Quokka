@@ -30,8 +30,7 @@ public class ClassManager {
 
     public static void load(Launcher _launcher){
         login_process = Login_Process.getInstance();
-        new UpdateManager().execute();
-        login_process.readUsersFile("userlist.txt");
+//        login_process.readUsersFile("userlist.txt");
         launcher = _launcher;
 
         menuBar = new MenuBar();
@@ -55,6 +54,7 @@ public class ClassManager {
 
 
         mainMenu.setOnAction(e -> {
+            login_process.setCurrentUser(login_process.getCurrentUser());
             try {
                 Launcher.setScreen(getWelcomeSplash().getScreen());
             } catch (IOException ex) {
@@ -64,7 +64,7 @@ public class ClassManager {
 
         exit.setOnAction(e -> Launcher.close());
         logout.setOnAction(event -> {
-            login_process.setCurrentUser();
+            login_process.setCurrentUser(null);
             try {
                 Launcher.setScreen(ClassManager.getWelcomeSplash().getScreen());
             } catch (IOException e) {
@@ -80,10 +80,10 @@ public class ClassManager {
             alert.setTitle("");
             alert.setContentText("Quokka is a online communication system\n" +
                     "made by a team of four developers:\n" +
-                    "Antoine Moghaddar\n" +
-                    "Rowin Veneman\n" +
-                    "Rick Röttjers\n" +
-                    "Brent Verharen\n");
+                    "\t\tAntoine Moghaddar\n" +
+                    "\t\tRowin Veneman\n" +
+                    "\t\tRick Röttjers\n" +
+                    "\t\tBrent Verharen\n");
 
             alert.show();
         });
