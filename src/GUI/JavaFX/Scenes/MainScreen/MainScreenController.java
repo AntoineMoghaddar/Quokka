@@ -101,16 +101,17 @@ public class MainScreenController implements Initializable {
     }
 
     public void processMessage(Message messagecurr) {
-        if (index == 0) {
+//        if (index == 0) {
             for (Message message : message_process.getMessages()) {
                 messages.add(message.getMessage());
             }
+            messages.add(messagecurr.getMessage());
             MessageViewList.setItems(messages);
 
-        } else {
-            currentMessage.add(messagecurr.getMessage());
-            MessageViewList.setItems(currentMessage);
-            currentMessage.removeAll();
-        }
+//        } else {
+//            currentMessage.add(messagecurr.getMessage());
+//            MessageViewList.setItems(currentMessage);
+//            currentMessage.removeAll();
+//        }
     }
 }
