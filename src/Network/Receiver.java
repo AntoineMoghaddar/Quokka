@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.Message_Process;
 import Helperclasses.ByteHandler;
 
 /**
@@ -153,9 +155,10 @@ public class Receiver implements Runnable {
                     int addLength = add.getBytes().length;
                     byte[] addBuf = new byte[addLength + 1];
                     System.arraycopy(add.getBytes(), 0, addBuf, 1, addLength);
-                    stream.write(addBuf);
-                    stream.write(addBuf);
-                    stream.write(file);
+                    Message_Process mp = Message_Process.getInstance();
+                    String message = new String(file, "UTf-8");
+                    mp.fileWriter("x","x", message);
+
                     stream.flush();
                     stream.close();
                 }
