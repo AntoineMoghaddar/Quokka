@@ -27,8 +27,8 @@ public class Login_Process {
     private Login_Process() {
         quokkaModel = QuokkaModel.getInstance();
         readUsersFile("userlist.txt");
-//        UpdateManager updateManagee = new UpdateManager();
-//        updateManagee.execute();
+        UpdateManager updateManagee = new UpdateManager();
+        updateManagee.execute();
 
     }
 
