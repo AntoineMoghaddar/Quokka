@@ -1,5 +1,8 @@
 package Helperclasses;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * Created by Rowin on 12-4-2017.
  * Helper class to make handling bytes easier
@@ -79,5 +82,19 @@ public class ByteHandler {
         res[1] = byteCopy(src,8,res[1],0,8);
 
         return res;
+    }
+
+    public static InetAddress byteToInet(byte[] src) {
+            byte[] buf = new byte[4];
+            buf[0] = src[0];
+            buf[1] = src[1];
+            buf[2] = src[2];
+            buf[3] = src[3];
+            try{
+                return InetAddress.getByAddress(buf);
+            } catch(UnknownHostException e) {
+
+            }
+        return null;
     }
 }

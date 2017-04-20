@@ -14,15 +14,14 @@ public class Client {
         try {
             routing = new Routing(InetAddress.getLocalHost());
             System.out.println(InetAddress.getLocalHost());
-            (new Thread(new Sender(routing))).start();
-            (new Thread(new Receiver(routing))).start();
+            Sender sender = new Sender(routing);
+            new Thread(sender).start();
+            new Thread(new Receiver(routing,sender)).start();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
 
-
     }
-
 
 }

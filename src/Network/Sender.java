@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -28,19 +29,21 @@ public class Sender implements Runnable {
 
     private static final int PORT = 8888;
 
+    private int counter;
+
+    int sendMax = 256;
+
     public void run() {
 
         MulticastSocket socket = null;
         DatagramPacket sendPack = null;
         Scanner scan = new Scanner(System.in);
         byte[] outBuf;
-
         InetAddress ip;
 
 
         try {
             socket = new MulticastSocket(8888);
-            long counter = 0;
             String msg;
             System.out.println("Please enter your username");
             String name = scan.nextLine();
@@ -55,19 +58,17 @@ public class Sender implements Runnable {
                 if (System.currentTimeMillis() - previousSendTime > 5000) {
                     //Make our presence known
                     previousSendTime = System.currentTimeMillis();//possible slight delay
-
-                    socket.send(new DatagramPacket(routing.generateRoutingData(), routing.getRoutingDataSize(), address, PORT));
+                    socket.send(new DatagramPacket(routing.generateConnectedClientsData(), routing.getConnectedClientsDataSize(), address, PORT));
                 }
 
                 msg = scan.nextLine();
-                counter++;
                 msgLength = msg.getBytes().length;
                 outBuf = new byte[msgLength + 1];
                 outBuf[0] = 0;//Code used to indicate that this is a message
                 System.arraycopy(msg.getBytes(), 0, outBuf, 1, msgLength);
                 sendPack = new DatagramPacket(outBuf, msgLength + 1, address, PORT);
 
-                socket.send(sendPack);
+                sendPacket(socket, sendPack, ip);
 
                 System.out.println(name + " : " + msg);
                 try {
@@ -80,53 +81,127 @@ public class Sender implements Runnable {
         }
     }
 
+    public void sendPacket(MulticastSocket socket, DatagramPacket packet, InetAddress ip){
+        try {
+            // [0] packet type, [1][2] seq, [3][4] total packets, [5][6] amount of data bytes, [7-10] address
+            byte[] buf = packet.getData();
+            byte[] res = new byte[buf.length + 11];
+            res[0] = 4;
+            byte[] seq = ByteHandler.intToBytes(counter);
+            res[1] = seq[0];
+            res[2] = seq[1];
+            int fileSize = res.length/sendMax;
+            byte[] numPack = ByteHandler.intToBytes(fileSize);
+            res[3] = numPack[0];
+            res[4] = numPack[1];
+            byte[] bytes = ByteHandler.intToBytes(buf.length);
+            res[5] = bytes[0];
+            res[6] = bytes[1];
+            byte[] ipAddress = ip.getAddress();
+            res[7] = ipAddress[0];
+            res[8] = ipAddress[1];
+            res[9] = ipAddress[2];
+            res[10] = ipAddress[3];
+            System.out.println(ip.toString());
+
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void forwardPacket(MulticastSocket socket, DatagramPacket packet, InetAddress originalSource, InetAddress destination) {
+        packet.setAddress(destination);
+        byte[] data = packet.getData();
+        byte[] ipAddress = originalSource.getAddress();
+        data[7] = ipAddress[0];
+        data[8] = ipAddress[1];
+        data[9] = ipAddress[2];
+        data[10] = ipAddress[3];
+        packet.setData(data);
+        try{
+        socket.send(packet);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    }
+
+    //sending file
     private void sendFile(MulticastSocket socket, InetAddress group) {
-        File test = new File("userlist.txt");
+        File test = new File("sneding.test");
         Path path = test.toPath();
-        int sendSize = 256; //byte send capacity
+        int sendMax = 256; //byte send capacity
         int numPack = 0;
+        int sendSize = sendMax;
+        int sentBytes = 0;
         try {
             byte[] fileArray = Files.readAllBytes(path);
             int fileSize = fileArray.length;
-            if((numPack = fileArray.length / sendSize) == 0){
+            int remain = fileSize;
+            numPack = fileArray.length / sendMax;
+            System.out.println(fileArray.length);
+            if(numPack  == 0){
                 numPack = 1;
             }else{
                 numPack = numPack;
             }
-            for(int seq = 0; seq <= numPack; seq++){
+            for(int seq = 0; seq < numPack; seq++){
+                if(remain >= sendMax - 7){
+                    sendSize = sendMax - 7;
+                }else{
+                    sendSize = remain;
+                }
+                //setup header
+                sentBytes = sentBytes + sendSize;
+                remain = fileArray.length - sentBytes;
                 fileArray = Files.readAllBytes(path);
-                byte[] buf = new byte[fileArray.length + 6];
-                System.arraycopy(fileArray, 0, buf, 6, fileSize);
-                buf[0] = (byte) 4;
+                byte[] buf = new byte[sendSize + 7];
+                buf[0] = 4;
                 byte[] bufSeq = ByteHandler.intToBytes(seq);
                 buf[1] = bufSeq[0];
                 buf[2] = bufSeq[1];
                 byte[] bufNum = ByteHandler.intToBytes(numPack);
                 buf[3] = bufNum[0];
                 buf[4] = bufNum[1];
-                buf[5] = (byte)fileSize;
+                byte[] byteSize = ByteHandler.intToBytes(sendSize);
+                buf[5] = byteSize[0];
+                buf[6] = byteSize[1];
+                //send packets with appropriate length
                 if(seq == 0 && numPack == 1){
+                    System.arraycopy(fileArray, 0, buf, 7, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
                 } else if(seq == 0 && numPack != 1){
-                    byte[] cutArray = Arrays.copyOfRange(buf, 0, sendSize);// might have to be +1
+                    System.arraycopy(fileArray, 0, buf, 7, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
                 } else if(seq != 0 && numPack != 1){
-                    int remain = fileArray.length - (seq * sendSize);
-                    if(remain > sendSize){
-                        byte[] cutArray = Arrays.copyOfRange(buf, seq * sendSize, seq * 2 * sendSize);
+                    if(remain >= sendMax){
+                        System.arraycopy(fileArray, seq * sendMax, buf, 7, sendSize - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                         socket.send(packet);
                     } else{
-                        byte[] cutArray = Arrays.copyOfRange(buf, seq * sendSize, (seq * sendSize) + remain);
+                        System.arraycopy(fileArray, seq * sendMax, buf, 7, remain - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                         socket.send(packet);
                     }
 
                 }
             }
-
+            byte[] buf = new byte[7];
+            buf[0] = 4;
+            byte[] bufSeq = ByteHandler.intToBytes(numPack);
+            buf[1] = bufSeq[0];
+            buf[2] = bufSeq[1];
+            byte[] bufNum = ByteHandler.intToBytes(numPack);
+            buf[3] = bufNum[0];
+            buf[4] = bufNum[1];
+            byte[] byteSize = ByteHandler.intToBytes(sendSize);
+            buf[5] = byteSize[0];
+            buf[6] = byteSize[1];
+            DatagramPacket endPacket = new DatagramPacket(buf, buf.length, group, PORT);
+            socket.send(endPacket);
 
         } catch (IOException e) {
             e.printStackTrace();
