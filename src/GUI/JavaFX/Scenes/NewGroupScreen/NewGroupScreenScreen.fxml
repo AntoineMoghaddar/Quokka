@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox fx:id="loginBox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="613.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.JavaFX.Scenes.LoginScreen.LoginScreenController">
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+    <MenuBar fx:id="menu" />
+    <ImageView fitHeight="215.0" fitWidth="342.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="">
+        <Image url="@../../img.png" />
+        <VBox.margin>
+            <Insets top="40.0" />
+        </VBox.margin>
+        <cursor>
+            <Cursor fx:constant="DEFAULT" />
+        </cursor>
+    </ImageView>
+   <Text fill="#fa2032" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a New Group">
+      <font>
+         <Font name="Comic Sans MS Bold Italic" size="19.0" />
+      </font>
+   </Text>
+   <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="188.0" promptText="Group name">
+      <VBox.margin>
+         <Insets top="10.0" />
+      </VBox.margin>
+   </TextField>
+   <ComboBox prefHeight="26.0" prefWidth="188.0" promptText="Choose a person">
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin>
+   </ComboBox>
+   <HBox alignment="CENTER" prefHeight="0.0" prefWidth="431.0">
+      <children>
+         <Button fx:id="loginButton" mnemonicParsing="false" text="Add">
+            <HBox.margin>
+               <Insets right="14.0" />
+            </HBox.margin>
+         </Button>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Or" />
+         <Button fx:id="registerButton" alignment="CENTER" mnemonicParsing="false" text="Finish Group">
+            <HBox.margin>
+               <Insets left="14.0" />
+            </HBox.margin></Button>
+      </children>
+      <VBox.margin>
+         <Insets top="15.0" />
+      </VBox.margin>
+   </HBox>
+
+</VBox>

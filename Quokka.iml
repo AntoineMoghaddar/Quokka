@@ -7,13 +7,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/mod 3/proj/commons-codec-1.10/commons-codec-1.10.jar!/" />
+          <root url="file://$USER_HOME$/Downloads/commons-codec-1.10" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
+        <JAVADOC>
+          <root url="file://$USER_HOME$/Downloads/commons-codec-1.10/apidocs" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads/commons-codec-1.10" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads/commons-codec-1.10" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads/commons-codec-1.10" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
     <orderEntry type="library" name="commons-codec-1.10" level="project" />
