@@ -56,7 +56,7 @@ public class Receiver implements Runnable {
         // Add the source of receivedPacket to list of ConnectedClients
         routing.addConnectedClient(receivedPacket.getAddress());
 
-        InetAddress originalSource = ByteHandler.byteToInet(Arrays.copyOfRange(receivedPacket.getData(), 7,10));
+        InetAddress originalSource = ByteHandler.byteToInet(Arrays.copyOfRange(receivedPacket.getData(), 6,10));
 
         // Forward packet if needed
         if(!routing.forwardAddresses(originalSource).isEmpty()) {
