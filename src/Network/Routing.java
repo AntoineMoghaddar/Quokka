@@ -17,7 +17,7 @@ public class Routing {
     private ArrayList<InetAddress> ConnectedClients = new ArrayList<>();
 
     // Keeps track of which packets need to be forwarded
-    private HashMap<InetAddress, ArrayList<InetAddress>> ForwardingTable;
+    private HashMap<InetAddress, ArrayList<InetAddress>> ForwardingTable = new HashMap<>();
 
     private InetAddress localAddress;
 
@@ -30,6 +30,9 @@ public class Routing {
     * source : source of the packet
     * */
     public void updateForwarding(byte[] data, InetAddress source) {
+        if(source.toString().equals("/0.0.0.0")) {
+            return;
+        }
         ArrayList<InetAddress> hosts = new ArrayList<>();
         for(int i = 0; i < data.length/4; i++) {
             byte[] buf = new byte[4];

@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.Message_Process;
 import Helperclasses.ByteHandler;
 
 /**
@@ -17,8 +19,12 @@ public class Receiver implements Runnable {
 
     private Routing routing;
 
+    private TCPHandler TCP;
+
     public Receiver(Routing _routing, Sender ownSender) {
         routing = _routing;
+        TCP = new TCPHandler(this);
+        ownSender.setTCP(TCP);
         this.ownSender = ownSender;
     }
 
@@ -53,16 +59,39 @@ public class Receiver implements Runnable {
     }
 
     public void receivePacket(DatagramPacket receivedPacket, MulticastSocket socket) {
+        // Ignore if we are the source
+        try {
+            InetAddress localaddr = InetAddress.getLocalHost();
+            if(receivedPacket.getAddress().equals(localaddr)){
+                return;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         // Add the source of receivedPacket to list of ConnectedClients
         routing.addConnectedClient(receivedPacket.getAddress());
 
-        InetAddress originalSource = ByteHandler.byteToInet(Arrays.copyOfRange(receivedPacket.getData(), 7,10));
+        InetAddress originalSource = ByteHandler.byteToInet(Arrays.copyOfRange(receivedPacket.getData(), 6,10));
 
-        // Forward packet if needed
-        if(!routing.forwardAddresses(originalSource).isEmpty()) {
-            ArrayList<InetAddress> list = routing.forwardAddresses(originalSource);
-            for(InetAddress dest : list) {
-                ownSender.forwardPacket(socket,receivedPacket, originalSource, dest);
+        // Add both clients to TCPHandler
+        TCP.addClient(receivedPacket.getAddress(), originalSource);
+
+
+        if(routing != null && routing.forwardAddresses(originalSource)!=null) {
+            for (InetAddress dest : routing.forwardAddresses(originalSource)) {
+                ownSender.forwardPacket(socket, receivedPacket, originalSource, dest);
+            }
+        }
+        //Send ack if not ack pack itself, exit function if duplicate pack
+        if(receivedPacket.getData()[0] != 2) {
+            //if not ack packet
+            int receivedSeq = ((receivedPacket.getData()[2] & 0xff) << 8) | (receivedPacket.getData()[1] & 0xff);
+
+
+            if(TCP.packetReceived(receivedSeq,originalSource)){
+                // Packet is a duplicate
+                return;
             }
         }
 
@@ -72,7 +101,7 @@ public class Receiver implements Runnable {
         switch (receivedPacket.getData()[0]) {
             case 0:
                 // Message
-                String msg = new String(receivedPacket.getData(), 1, receivedPacket.getLength() - 1);
+                String msg = new String(receivedPacket.getData(), 1, receivedPacket.getLength());
                 System.out.println("From " + originalSource + " Msg : " + msg);
                 break;
             case 1:
@@ -81,6 +110,9 @@ public class Receiver implements Runnable {
                 break;
             case 2:
                 //ACK packet
+
+                int receivedAck = ((receivedPacket.getData()[2] & 0xff) << 8) | (receivedPacket.getData()[1] & 0xff);
+                TCP.ackReceived(receivedAck, originalSource);
             case 4:
                 receiveFile(socket, receivedPacket);
 
@@ -101,7 +133,7 @@ public class Receiver implements Runnable {
             int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
             int bytes = ((buf[6] & 0xff) << 8) | (buf[5] & 0xff);
             System.out.println("bytes " + bytes);
-            FileOutputStream stream = new FileOutputStream("test2.txt");
+            FileOutputStream stream = new FileOutputStream("messages.txt");
             System.out.println("seq = " + seq);
                 //store data in byte[]
                 if(seq < numPack) {
@@ -119,7 +151,14 @@ public class Receiver implements Runnable {
                     }
                 }else {
                     //write to file
-                    stream.write(file);
+                    String add = "x;";
+                    int addLength = add.getBytes().length;
+                    byte[] addBuf = new byte[addLength + 1];
+                    System.arraycopy(add.getBytes(), 0, addBuf, 1, addLength);
+                    Message_Process mp = Message_Process.getInstance();
+                    String message = new String(file, "UTf-8");
+                    mp.fileWriter("x","x", message);
+
                     stream.flush();
                     stream.close();
                 }
@@ -141,4 +180,5 @@ public class Receiver implements Runnable {
         return newText;
     }
 
+    public Sender getOwnSender() { return ownSender; }
 }

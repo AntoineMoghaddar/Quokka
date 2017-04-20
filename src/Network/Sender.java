@@ -21,6 +21,8 @@ public class Sender implements Runnable {
 
     private Routing routing;
 
+    private TCPHandler TCP;
+
     public Sender(Routing _routing) {
         routing = _routing;
     }
@@ -31,7 +33,11 @@ public class Sender implements Runnable {
 
     private int counter;
 
+    private MulticastSocket sock;
+
     int sendMax = 256;
+
+    private String file  = "File.";
 
     public void run() {
 
@@ -44,6 +50,7 @@ public class Sender implements Runnable {
 
         try {
             socket = new MulticastSocket(8888);
+            sock = socket;
             String msg;
             System.out.println("Please enter your username");
             String name = scan.nextLine();
@@ -62,13 +69,20 @@ public class Sender implements Runnable {
                 }
 
                 msg = scan.nextLine();
-                msgLength = msg.getBytes().length;
-                outBuf = new byte[msgLength + 1];
-                outBuf[0] = 0;//Code used to indicate that this is a message
-                System.arraycopy(msg.getBytes(), 0, outBuf, 1, msgLength);
-                sendPack = new DatagramPacket(outBuf, msgLength + 1, address, PORT);
 
-                sendPacket(socket, sendPack, ip);
+                if (msg.toLowerCase().indexOf(file.toLowerCase()) != -1 ) {
+                    String[] path = msg.split(".");
+                    sendFile(socket, address, ip, path[0]);
+
+                } else {
+                    msgLength = msg.getBytes().length;
+                    outBuf = new byte[msgLength + 1];
+                    outBuf[0] = 0;//Code used to indicate that this is a message
+                    System.arraycopy(msg.getBytes(), 0, outBuf, 1, msgLength);
+                    sendPack = new DatagramPacket(outBuf, msgLength + 1, address, PORT);
+                    sendPacket(socket, sendPack, ip);
+                }
+
 
                 System.out.println(name + " : " + msg);
                 try {
@@ -85,8 +99,8 @@ public class Sender implements Runnable {
         try {
             // [0] packet type, [1][2] seq, [3][4] total packets, [5][6] amount of data bytes, [7-10] address
             byte[] buf = packet.getData();
-            byte[] res = new byte[buf.length + 11];
-            res[0] = 4;
+            byte[] res = new byte[buf.length];
+           /* res[0] = 4;
             byte[] seq = ByteHandler.intToBytes(counter);
             res[1] = seq[0];
             res[2] = seq[1];
@@ -101,10 +115,44 @@ public class Sender implements Runnable {
             res[7] = ipAddress[0];
             res[8] = ipAddress[1];
             res[9] = ipAddress[2];
-            res[10] = ipAddress[3];
-            System.out.println(ip.toString());
-
+            res[10] = ipAddress[3];*/
             socket.send(packet);
+            TCP.packetSent(counter,packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Used by TCPHandler to resend packets
+    public void sendPacket(DatagramPacket packet) {
+        try {
+            sock.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Used by receiver to send ack packets
+    public void sendAck(int ackNumber, InetAddress destination) {
+        try{
+            byte buf[] = new byte[7];
+            buf[0] = 2;
+            byte[] seq = ByteHandler.intToBytes(ackNumber);
+            buf[1] = seq[0];
+            buf[2] = seq[1];
+            try {
+                byte[] ip = InetAddress.getLocalHost().getAddress();
+                buf[7] = ip[0];
+                buf[8] = ip[1];
+                buf[9] = ip[2];
+                buf[10] = ip[3];
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            DatagramPacket pack = new DatagramPacket(buf,buf.length,destination,PORT);
+
+            sock.send(pack);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,35 +176,35 @@ public class Sender implements Runnable {
     }
 
     //sending file
-    private void sendFile(MulticastSocket socket, InetAddress group) {
-        File test = new File("sneding.test");
-        Path path = test.toPath();
+    private void sendFile(MulticastSocket socket, InetAddress group, InetAddress ip, String path) {
+        File test = new File(path);
+        Path pathFile = test.toPath();
         int sendMax = 256; //byte send capacity
         int numPack = 0;
         int sendSize = sendMax;
         int sentBytes = 0;
         try {
-            byte[] fileArray = Files.readAllBytes(path);
+            byte[] fileArray = Files.readAllBytes(pathFile);
             int fileSize = fileArray.length;
             int remain = fileSize;
             numPack = fileArray.length / sendMax;
-            System.out.println(fileArray.length);
+            System.out.println(numPack);
             if(numPack  == 0){
                 numPack = 1;
             }else{
                 numPack = numPack;
             }
             for(int seq = 0; seq < numPack; seq++){
-                if(remain >= sendMax - 7){
-                    sendSize = sendMax - 7;
+                if(remain >= sendMax - 11){
+                    sendSize = sendMax - 11;
                 }else{
                     sendSize = remain;
                 }
                 //setup header
                 sentBytes = sentBytes + sendSize;
                 remain = fileArray.length - sentBytes;
-                fileArray = Files.readAllBytes(path);
-                byte[] buf = new byte[sendSize + 7];
+                fileArray = Files.readAllBytes(pathFile);
+                byte[] buf = new byte[sendSize + 11];
                 buf[0] = 4;
                 byte[] bufSeq = ByteHandler.intToBytes(seq);
                 buf[1] = bufSeq[0];
@@ -167,24 +215,33 @@ public class Sender implements Runnable {
                 byte[] byteSize = ByteHandler.intToBytes(sendSize);
                 buf[5] = byteSize[0];
                 buf[6] = byteSize[1];
+                byte[] ipAddress = ip.getAddress();
+                buf[7] = ipAddress[0];
+                buf[8] = ipAddress[1];
+                buf[9] = ipAddress[2];
+                buf[10] = ipAddress[3];
                 //send packets with appropriate length
                 if(seq == 0 && numPack == 1){
-                    System.arraycopy(fileArray, 0, buf, 7, sendSize);
+                    System.arraycopy(fileArray, 0, buf, 11, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                    socket.send(packet);
+                    TCP.packetSent(seq,packet);
+                    sendPacket(socket, packet, group);
                 } else if(seq == 0 && numPack != 1){
-                    System.arraycopy(fileArray, 0, buf, 7, sendSize);
+                    System.arraycopy(fileArray, 0, buf, 11, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                    socket.send(packet);
+                    TCP.packetSent(seq,packet);
+                    sendPacket(socket, packet, group);
                 } else if(seq != 0 && numPack != 1){
                     if(remain >= sendMax){
-                        System.arraycopy(fileArray, seq * sendMax, buf, 7, sendSize - 1);
+                        System.arraycopy(fileArray, seq * sendMax, buf, 11, sendSize - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                        socket.send(packet);
+                        TCP.packetSent(seq,packet);
+                        sendPacket(socket, packet, group);
                     } else{
-                        System.arraycopy(fileArray, seq * sendMax, buf, 7, remain - 1);
+                        System.arraycopy(fileArray, seq * sendMax, buf, 11, remain - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                        socket.send(packet);
+                        TCP.packetSent(seq,packet);
+                        sendPacket(socket, packet, group);
                     }
 
                 }
@@ -200,12 +257,21 @@ public class Sender implements Runnable {
             byte[] byteSize = ByteHandler.intToBytes(sendSize);
             buf[5] = byteSize[0];
             buf[6] = byteSize[1];
+            byte[] ipAddress = ip.getAddress();
+            buf[7] = ipAddress[0];
+            buf[8] = ipAddress[1];
+            buf[9] = ipAddress[2];
+            buf[10] = ipAddress[3];
             DatagramPacket endPacket = new DatagramPacket(buf, buf.length, group, PORT);
-            socket.send(endPacket);
+            sendPacket(socket, endPacket, group);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
+    public void setTCP(TCPHandler tcp) {
+        TCP = tcp;
+    }
 }

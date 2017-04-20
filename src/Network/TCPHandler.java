@@ -1,93 +1,112 @@
 package Network;
 
+import Helperclasses.ByteHandler;
+
+import java.net.DatagramPacket;
+import java.util.*;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by Rowin on 12-4-2017.
- * This class keeps track of TCP ACKs received and sent, every client has a TCPHandler
+ * Created by Rowin on 20-4-2017.
  */
 public class TCPHandler {
 
-    private Receiver owningReceiver;
 
-    // Amount of acks needed to conclude that a packet went missing
-    private  static final int  RETRANSMITSPEED = 2;
+    private final int TIMEOUT = 1000; // ms waiting time for resending of packet
 
-    //Keeps track of this clients ACK number
     private int ackNumber = 0;
 
-    // Map of ACKs it expects from a certain InetAddress
+    private Receiver ownReceiver;
+
+    // Ack we expect to receive
     private HashMap<InetAddress, ArrayList<Integer>> ackExpected = new HashMap<>();
 
-    // Map of ACKs it has received from a certain InetAddress, this is used to ask for retransmissions and ignoring duplicate packets
+    // Ack we received
     private HashMap<InetAddress, ArrayList<Integer>> ackReceived = new HashMap<>();
 
-    public TCPHandler(Receiver owner) { owningReceiver = owner; }
+    // Obtained Seq's, ie to check if we get a duplicate packet
+    private HashMap<InetAddress, ArrayList<Integer>> ObtainedSeq = new HashMap<>();
 
-    //Call this after getAckNumber() and when a multicast packet is sent
-    public void packetSent(){
-        //Add previous ackNumber to list of expected Acks for all destinations
-        // @TODO: Check if list actually changes in for each loop
+    // All Timeout timers for expected ACK's
+    private ArrayList<TCPTimerTask> Timers = new ArrayList<>();
+
+    public TCPHandler(Receiver owner) { ownReceiver = owner; }
+
+    public void packetSent(int ackNum, DatagramPacket packet) {
+        // Create Timer + Add ACK to expected Ack's
         for(List<Integer> list : ackExpected.values()) {
-            if(list.indexOf(ackNumber-1)==-1) { // Check if it is not already in the list
-                list.add(ackNumber-1);
+            if(list.indexOf(ackNum)==-1) {
+                list.add(ackNum);
+            }
+        }
+
+        addTimer(ackNum, packet);
+    }
+
+
+    public void addTimer(int ackNumber, DatagramPacket packet) {
+        Timer timer = new Timer();
+        TCPTimerTask Task = new TCPTimerTask(this,ackNumber,packet);
+        timer.schedule(Task, TIMEOUT);
+    }
+
+    public void stopTimer(int ackNumber) {
+        for(TCPTimerTask task : Timers) {
+            if(task.getAckNumber()==ackNumber) {
+                task.cancel();
             }
         }
     }
 
-    // Call this after getAckNumber() and when a packet is sent to a single destination
-    public void packetSent(InetAddress destination) {
-        //Add previous ackNumber to list of expected Acks for this destination
-        int index = ackExpected.get(destination).indexOf(ackNumber-1);
-        if(index == -1) {
-            // Only add ackNumber-1 to the list if its not already in the list
-            ackExpected.get(destination).add(ackNumber - 1);
+    public void ackReceived(int ackNumber, InetAddress source) {
+        if(ackReceived.get(source).contains(ackNumber)) {
+            // Ignore, duplicate ACK
+        } else if(ackExpected.get(source).contains(ackNumber)){
+            // if we expect this ack
+            stopTimer(ackNumber);
+
+            // Add ack to ackReceived and remove from ackExpected
+            ackExpected.get(source).remove(Arrays.asList(ackNumber));
+
+            ackReceived.get(source).add(ackNumber);
         }
     }
 
-    public void ackReceived(InetAddress source, byte ackNumberReceived) {
-        // Remove ackNumberReceived from the list of ackExpected
-        int index = ackExpected.get(source).indexOf(ackNumberReceived);
-        if(index == -1) {
-            // Already removed
-        } else {
-            ackExpected.get(source).remove(index);
-        }
-
-        // Add ackNumberReceived to the list of ackReceived if is not there already
-        if(ackReceived.get(source).indexOf(ackNumberReceived)==-1) {
-            ackReceived.get(source).add((int) ackNumberReceived);
-        }
+    public void resend(DatagramPacket pack) {
+        ownReceiver.getOwnSender().sendPacket(pack);
     }
 
-    // Note this method could be added to ackReceived() but this is easier to read/comprehend
-    // Use this to check if a received packet is a duplicate, resend ACK. DO NOT USE ON ACKS packets!
-    public boolean isDuplicate(InetAddress source, byte ackNumberReceived) {
-        if(ackReceived.get(source).indexOf(ackNumberReceived)!=-1) {
-            // ackNumberReceived is in the list, so duplicate resend ACK
-            return true;
+    // Returns true if duplicate
+    public boolean packetReceived(int seqNumber, InetAddress source){
+        return ObtainedSeq.containsKey(source) && ObtainedSeq.get(source).contains(seqNumber);
+    }
+
+    public void addClient(InetAddress sourceA, InetAddress sourceB){
+        if(!ackReceived.containsKey(sourceA)) {
+            ArrayList<Integer> arr = new ArrayList<>();
+            ackReceived.put(sourceA, arr);
         }
-        return false;
-    }
-
-    // Checks if this specific ackNumber needs to be resent, called from TCPTimerTask
-    public boolean needsRetransmit(int ackToCheck) {
-        for(List<Integer> list : ackReceived.values()) {
-            if(!list.contains(ackToCheck)) {
-                // list does not contain the ack
-                return true;
-            }
+        if(!ackExpected.containsKey(sourceA)) {
+            ArrayList<Integer> arr = new ArrayList<>();
+            ackReceived.put(sourceA, arr);
         }
-        return false;
-    }
+        if(!ObtainedSeq.containsKey(sourceA)) {
+            ArrayList<Integer> arr = new ArrayList<>();
+            ackReceived.put(sourceA, arr);
+        }
 
-    // Returns the ackNumber for the next packet
-    public int getAckNumber() {
-        ackNumber++;
-        return --ackNumber;
-    }
+        if(!ackReceived.containsKey(sourceB)) {
+            ArrayList<Integer> arr = new ArrayList<>();
+            ackReceived.put(sourceA, arr);
+        }
+        if(!ackExpected.containsKey(sourceB)) {
+            ArrayList<Integer> arr = new ArrayList<>();
+            ackReceived.put(sourceA, arr);
+        }
+        if(!ObtainedSeq.containsKey(sourceB)) {
+            ArrayList<Integer> arr = new ArrayList<>();
+            ackReceived.put(sourceA, arr);
+        }
 
+    }
 }
