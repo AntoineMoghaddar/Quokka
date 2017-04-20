@@ -8,6 +8,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+
+/**
+ * @author Moose
+ * @Definition Exports messages at the end of every session with the system
+ * @use writes all data into the correct file
+ */
 public class MessageExporter {
 
     public static void exportResults() throws IOException {

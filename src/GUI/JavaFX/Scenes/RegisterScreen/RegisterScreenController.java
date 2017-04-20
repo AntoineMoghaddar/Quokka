@@ -22,6 +22,8 @@ import java.util.ResourceBundle;
 
 /**
  * @author Moose
+ * @Definition Controller for this Screen
+ * @use Sets all values and gives functionality to the items in the view
  */
 public class RegisterScreenController implements Initializable{
 

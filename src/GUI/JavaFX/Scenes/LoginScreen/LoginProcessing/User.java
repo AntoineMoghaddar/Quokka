@@ -1,19 +1,32 @@
 package GUI.JavaFX.Scenes.LoginScreen.LoginProcessing;
 
 /**
- * Created by Antoine Moghaddar on 30-1-2016.
+ * @author Moose
+ * @Definition User Object consistent of a single user file record
+ * @-> including belonging methods
  */
 public class User {
 
     private String gender, key, username, email, password;
 
-    //only used for logging in
+    /**
+     * @param username; The given username
+     * @param password; The given password
+     * @Definition Login
+     */
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    //this constructor is only used for registering
+    /**
+     * @param username; The Name of the current user
+     * @param password; A (Hmac-SHA512) hashed version of the user's password; this password can't ever be retrieved in normal form
+     * @param email;    The current user his mail
+     * @param gender;   The current user his/her gender
+     * @param key;      The automatic generated hash secret key
+     * @Definition Register form
+     */
     public User(String username, String password, String email, String gender, String key) {
         this.username = username;
         this.email = email;
@@ -22,7 +35,9 @@ public class User {
         this.key = key;
     }
 
-
+    /**
+     * @Definition Getters
+     */
     public String getGender() {
         return gender;
     }
@@ -31,10 +46,9 @@ public class User {
         return key;
     }
 
-    public String getPassword() {
+    String getPassword() {
         return password;
     }
-
 
     public String getUsername() {
         return username;
@@ -44,6 +58,11 @@ public class User {
         return email;
     }
 
+    /**
+     * @Definition ToString method
+     * @use convert into String value
+     * @return String value of this current object
+     */
     @Override
     public String toString() {
         return "User{" +

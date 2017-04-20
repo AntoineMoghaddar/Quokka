@@ -25,7 +25,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * @author Moose.
+ * @author Moose
+ * @Definition Controller for this Screen
+ * @use Sets all values and gives functionality to the items in the view
  */
 public class WelcomeSplashController implements Initializable {
 

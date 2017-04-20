@@ -2,6 +2,7 @@ package GUI.Design;
 
 /**
  * @author Moose.
+ * @Definition Acknowledge forms for accepting log messages of declining them
  */
 public enum ConfirmationTypes {
     ACK, DEC;

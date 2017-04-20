@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author Moose
+ * @Definition imports messages at the beginning of every session with the system
+ * @use loads all data in from the given file
+ */
 public class MessageImporter {
 
     public static List<Message> importMessages() throws Exception {

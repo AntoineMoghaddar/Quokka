@@ -18,12 +18,23 @@ public class Message_Process {
     private Login_Process login_process = Login_Process.getInstance();
     private static Message_Process instance;
 
+    /**
+     * @Definition Constructor of this class
+     * @use Used in a singleton method
+     * @-> Only one instance of this method can be used through the entire project.
+     */
     private Message_Process() {
         messages = new ArrayList<>();
         messagesReWrite = new ArrayList<>();
-        readMessagesFile("messages.txt");
+        readMessagesFile();
     }
 
+
+    /**
+     * @return new instance or already existing instance of this class
+     * @Definition initializer for setting up the instance used in this project
+     * @use Singleton method initializer
+     */
     public static Message_Process getInstance() {
         if (instance == null) {
             instance = new Message_Process();
@@ -31,11 +42,19 @@ public class Message_Process {
         return instance;
     }
 
-    public int readMessagesFile(String filename) {
+    /**
+     * @Definition File reader for reading in the messages list
+     * @use a single file gets read in in order to load in all the messages
+     * @improvements this could be done more general
+     * @-> by making it more general you could give a file name as a parameter and read it in as well
+     * @-> Making it more general would have made our program more clean and would prevent redundant code.
+     * @-> This amount of objects refers to the amount of system users.
+     */
+    public void readMessagesFile() {
         Logger.notice("Applied for reading in messages list");
         int amountObjects = 0;
         try {
-            Scanner fileScanner = new Scanner(new File(filename));
+            Scanner fileScanner = new Scanner(new File("messages.txt"));
             int linenumber = 0;
             while (fileScanner.hasNextLine()) {
                 linenumber++;
@@ -59,10 +78,17 @@ public class Message_Process {
         } catch (FileNotFoundException fnf) {
             fnf.printStackTrace();
         }
-        return amountObjects;
     }
 
-    public Message processLineUserFile(String line) throws LineException {
+    /**
+     * @param line; the given line by @readMessagesFile
+     * @return returns a new created user
+     * @throws LineException; thrown if a line gives an error because it is non-existent etc
+     * @Definition line processor of the filereader
+     * @use this method processes the formatting of the given file and converts every line into an object.
+     * @-> this new user is being add to a list in @readMessagesFile
+     */
+    private Message processLineUserFile(String line) throws LineException {
         Message newMessage;
         String[] lineData = line.split(";");
         if (line.isEmpty()) {
@@ -81,8 +107,16 @@ public class Message_Process {
         }
         Logger.log("User " + newMessage.toString() + " processed");
         return newMessage;
-    }//done
+    }
 
+    /**
+     * @param sender;   The Name of the current user who's logged in
+     * @param receiver; The user who should receive the message
+     * @param message;  The actual message the user wants to send
+     * @Definition A file is located and will be written in.
+     * @use the method retrieves the file location and writes the data in the given format in the file
+     * @-> The secret key is automatically generated and will be used to XOR with the given "password" by using SHA512
+     */
     public void fileWriter(String sender, String receiver, String message) {
         PrintWriter printWriter;
         Logger.notice("Applied for writing in messages.txt");
@@ -97,13 +131,21 @@ public class Message_Process {
         }
     }
 
-
+    /**
+     * @return String value of this current object
+     * @Definition ToString method
+     * @use convert into String value
+     */
     public String toString() {
         return "Message_Process{" +
                 "messages=" + messages +
                 '}';
     }
 
+    /**
+     * @return The entire arraylist consistent of all messages
+     * @Definition gives a complete arraylist with all the registered messages
+     */
     public  ArrayList<Message> getMessages() {
         Logger.console(toString());
         return messages;

@@ -20,7 +20,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * @author Moose.
+ * @author Moose
+ * @Definition Controller for this Screen
+ * @use Sets all values and gives functionality to the items in the view
  */
 public class MainScreenController implements Initializable {
 
@@ -61,13 +63,11 @@ public class MainScreenController implements Initializable {
             }
         });
 
-        sendButton.setOnAction(event -> {
-            sendManager();
-        });
+        sendButton.setOnAction(event -> sendManager());
 
     }
 
-    public void sendManager() {
+    private void sendManager() {
         if (!(writeMessage.getText().isEmpty())) {
             if (ListViewMain.getSelectionModel().getSelectedItem() != null) {
 //                Logger.debug("Reached SendManager");
@@ -100,7 +100,7 @@ public class MainScreenController implements Initializable {
         }
     }
 
-    public void processMessage(Message messagecurr) {
+    private void processMessage(Message messagecurr) {
 //        if (index == 0) {
             for (Message message : message_process.getMessages()) {
                 messages.add(message.getMessage());

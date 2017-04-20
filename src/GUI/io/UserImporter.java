@@ -1,13 +1,18 @@
 package GUI.io;
 
 import Design.Logger;
-
 import GUI.JavaFX.Scenes.LoginScreen.LoginProcessing.User;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author Moose
+ * @Definition imports users at the beginning of every session with the system
+ * @use loads all data in from the given file
+ */
 public class UserImporter {
 
     public static List<User> importUsers() throws Exception {

@@ -9,6 +9,8 @@ import java.io.IOException;
 
 /**
  * @author Moose.
+ * @use FXML Loader
+ * @Definition Loads in the right FXML file and processes every connection between the controller and the FXML file
  */
 public class MainScreen implements Buildable {
 
