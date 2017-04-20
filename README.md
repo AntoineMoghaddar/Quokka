@@ -1,5 +1,5 @@
 <p align="center">
-<img src="Quokka\src\JavaFX\img.png"/>
+<img src="Quokka\src\GUI\JavaFX\img.png"/>
 </a>
 </p>
 
