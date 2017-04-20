@@ -17,7 +17,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
@@ -71,29 +70,29 @@ public class MainScreenController implements Initializable {
     public void sendManager() {
         if (!(writeMessage.getText().isEmpty())) {
             if (ListViewMain.getSelectionModel().getSelectedItem() != null) {
+//                Logger.debug("Reached SendManager");
+//                for (Message personalMessage : message_process.getMessages()) {
+//                    Logger.debug("Reached forloop");
+//                    if (ListViewMain.getSelectionModel().getSelectedItem().equals(personalMessage.getReceiver().getUsername())
+//                            && Objects.equals(personalMessage.getSender().getUsername(), login_process.getCurrentUser().getUsername())) {
+//                        Logger.err("value of personal: " + personalMessage.getReceiver().getUsername());
+//                        Logger.err("value of selected receiver: " + ListViewMain.getSelectionModel().getSelectedItem().toString());
+
                 message_process.fileWriter(login_process.getCurrentUser().getUsername(),
                         login_process.getUser(ListViewMain.getSelectionModel().getSelectedItem().toString()).getUsername(),
                         writeMessage.getText());
 
-                Logger.debug("Reached SendManager");
-                for (Message personalMessage : message_process.getMessages()) {
-                    Logger.debug("Reached forloop");
-                    if (ListViewMain.getSelectionModel().getSelectedItem().equals(personalMessage.getReceiver().getUsername())
-                            && Objects.equals(personalMessage.getSender().getUsername(), login_process.getCurrentUser().getUsername())) {
-                        Logger.err("value of personal: " + personalMessage.getReceiver().getUsername());
-                        Logger.err("value of selected receiver: " + ListViewMain.getSelectionModel().getSelectedItem().toString());
 
+                Message messagecurr = new Message(login_process.getCurrentUser(),
+                        login_process.getUser(ListViewMain.getSelectionModel().getSelectedItem().toString()),
+                        writeMessage.getText());
 
-                        Message messagecurr = new Message(login_process.getCurrentUser(),
-                                login_process.getUser(ListViewMain.getSelectionModel().getSelectedItem().toString()),
-                                writeMessage.getText());
-
-                        message_process.addMessages(messagecurr);
-                        writeMessage.setText("");
-                        processMessage(messagecurr);
-                        index++;
-                    }
-                }
+                message_process.addMessages(messagecurr);
+                writeMessage.setText("");
+                processMessage(messagecurr);
+                index++;
+//                    }
+//                }
 
             } else {
                 Logger.err("no data has been selected to send the message to");
@@ -102,16 +101,17 @@ public class MainScreenController implements Initializable {
     }
 
     public void processMessage(Message messagecurr) {
-        if (index == 0) {
+//        if (index == 0) {
             for (Message message : message_process.getMessages()) {
                 messages.add(message.getMessage());
             }
+            messages.add(messagecurr.getMessage());
             MessageViewList.setItems(messages);
 
-        } else {
-            currentMessage.add(messagecurr.getMessage());
-            MessageViewList.setItems(currentMessage);
-            currentMessage.removeAll();
-        }
+//        } else {
+//            currentMessage.add(messagecurr.getMessage());
+//            MessageViewList.setItems(currentMessage);
+//            currentMessage.removeAll();
+//        }
     }
 }
