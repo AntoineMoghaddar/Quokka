@@ -127,6 +127,7 @@ public class Sender implements Runnable {
 
     }
 
+    //sending file
     private void sendFile(MulticastSocket socket, InetAddress group) {
         File test = new File("sneding.test");
         Path path = test.toPath();
@@ -151,6 +152,7 @@ public class Sender implements Runnable {
                 }else{
                     sendSize = remain;
                 }
+                //setup header
                 sentBytes = sentBytes + sendSize;
                 remain = fileArray.length - sentBytes;
                 fileArray = Files.readAllBytes(path);
@@ -165,6 +167,7 @@ public class Sender implements Runnable {
                 byte[] byteSize = ByteHandler.intToBytes(sendSize);
                 buf[5] = byteSize[0];
                 buf[6] = byteSize[1];
+                //send packets with appropriate length
                 if(seq == 0 && numPack == 1){
                     System.arraycopy(fileArray, 0, buf, 7, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);

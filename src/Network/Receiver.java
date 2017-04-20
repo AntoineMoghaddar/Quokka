@@ -91,17 +91,19 @@ public class Receiver implements Runnable {
 
     }
 
+    //for receiving files
     private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
         try {
             byte[] buf = packet.getData();
             byte[] res = null;
-
+            //receive data from header
             int numPack = ((buf[4] & 0xff) << 8) | (buf[3] & 0xff);
             int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
             int bytes = ((buf[6] & 0xff) << 8) | (buf[5] & 0xff);
             System.out.println("bytes " + bytes);
             FileOutputStream stream = new FileOutputStream("test2.txt");
             System.out.println("seq = " + seq);
+                //store data in byte[]
                 if(seq < numPack) {
                     if (seq == 0) {
                         file = new byte[bytes];
@@ -116,6 +118,7 @@ public class Receiver implements Runnable {
                         return;
                     }
                 }else {
+                    //write to file
                     stream.write(file);
                     stream.flush();
                     stream.close();

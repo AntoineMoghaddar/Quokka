@@ -59,7 +59,7 @@ public class TCPHandler {
 
         // Add ackNumberReceived to the list of ackReceived if is not there already
         if(ackReceived.get(source).indexOf(ackNumberReceived)==-1) {
-            ackReceived.get(source).add(ackNumberReceived);
+            ackReceived.get(source).add((int) ackNumberReceived);
         }
     }
 
