@@ -1,11 +1,10 @@
 <p align="center">
-<a href="http://openshop.io/">
-<img src="https://www.creativeict.nl/wp-content/themes/creativeict/images/headerlogo1.svg"/>
+<img src="Quokka\src\JavaFX\img.png"/>
 </a>
 </p>
 
 # Development
-This is a project given at [https://www.utwente.nl/](University of Twente) by the Faculty of [https://www.utwente.nl/nl/ewi/](Electrotechnics Mathematics and Computer Science).
+This is a project given at University of Twente by the Faculty of Electrotechnics Mathematics and Computer Science.
 This Application was created for the project in module 3 of the study program Technical Computer Science.
 The aim of this application was to create a chat server using a Ad-hoc network. 
 providing this with a GUI was an extra functionality but still we did manage to create a wonderful GUI.
