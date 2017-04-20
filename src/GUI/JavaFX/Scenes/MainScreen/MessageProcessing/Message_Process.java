@@ -98,7 +98,14 @@ public class Message_Process {
     }
 
 
-    public ArrayList<Message> getMessages() {
+    public String toString() {
+        return "Message_Process{" +
+                "messages=" + messages +
+                '}';
+    }
+
+    public  ArrayList<Message> getMessages() {
+        Logger.console(toString());
         return messages;
     }
 
