@@ -122,15 +122,12 @@ public class Receiver implements Runnable {
      * @param packet
      */
     private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
-        System.out.println("ding");
         try {
             byte[] buf = packet.getData();
-            System.out.println("received file = " + Arrays.toString(buf));
             byte[] res = null;
             //receive data from header
             int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
             int numPack = ((buf[4] & 0xff) << 8) | (buf[3] & 0xff);
-            System.out.println("seq = " + seq + "numpack = " + numPack);
             int bytes = ((buf[6] & 0xff) << 8) | (buf[5] & 0xff);
                 //store data in byte[]
                 if(seq < numPack) {
@@ -143,7 +140,7 @@ public class Receiver implements Runnable {
                         System.arraycopy(file, 0, res, 0, file.length);
                         file = new byte[res.length + bytes];
                         System.arraycopy(res, 0, file, 0, res.length);
-                        System.arraycopy(file, res.length, buf, 7, bytes);
+                        System.arraycopy(file, res.length, buf, 11, bytes);
                         return;
                     }
                 }else {

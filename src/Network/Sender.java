@@ -114,7 +114,6 @@ public class Sender implements Runnable {
      */
     public void sendPacket(MulticastSocket socket, DatagramPacket packet, InetAddress ip) {
         try {
-            System.out.println("sendPacket file = " + Arrays.toString(packet.getData()));
             socket.send(packet);
             TCP.packetSent(counter, packet);
         } catch (IOException e) {
@@ -291,7 +290,6 @@ public class Sender implements Runnable {
         int msgLength = msg.getBytes().length;
         byte[] msgArray = new byte[msgLength];
         System.arraycopy(msg.getBytes(), 0, msgArray, 0, msgLength);
-        System.out.println("msg array = " + Arrays.toString(msgArray));
         int fileSize = msgArray.length;
         int remain = fileSize;
         numPack = msgArray.length / sendMax;
@@ -320,7 +318,6 @@ public class Sender implements Runnable {
             buf[3] = bufNum[0];
             buf[4] = bufNum[1];
             byte[] byteSize = ByteHandler.intToBytes(sendSize);
-            System.out.println("send size = " + sendSize);
             buf[5] = byteSize[0];
             buf[6] = byteSize[1];
             byte[] ipAddress = ip.getAddress();
@@ -334,7 +331,6 @@ public class Sender implements Runnable {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                 sendPacket(socket, packet, group);
                 TCP.packetSent(seq,packet);
-                System.out.println("send file = " + Arrays.toString(buf));
                 sendEndPacket(socket, group, numPack, sendSize, ip);
             } else if(seq == 0 && numPack != 1){
                 System.arraycopy(msgArray, 0, buf, 11, sendSize);
