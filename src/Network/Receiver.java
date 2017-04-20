@@ -101,7 +101,7 @@ public class Receiver implements Runnable {
             int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
             int bytes = ((buf[6] & 0xff) << 8) | (buf[5] & 0xff);
             System.out.println("bytes " + bytes);
-            FileOutputStream stream = new FileOutputStream("test2.txt");
+            FileOutputStream stream = new FileOutputStream("messages.txt");
             System.out.println("seq = " + seq);
                 //store data in byte[]
                 if(seq < numPack) {
@@ -119,6 +119,12 @@ public class Receiver implements Runnable {
                     }
                 }else {
                     //write to file
+                    String add = "x;";
+                    int addLength = add.getBytes().length;
+                    byte[] addBuf = new byte[addLength + 1];
+                    System.arraycopy(add.getBytes(), 0, addBuf, 1, addLength);
+                    stream.write(addBuf);
+                    stream.write(addBuf);
                     stream.write(file);
                     stream.flush();
                     stream.close();
