@@ -224,26 +224,22 @@ public class Sender implements Runnable {
                 if(seq == 0 && numPack == 1){
                     System.arraycopy(fileArray, 0, buf, 11, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                    socket.send(packet);
                     TCP.packetSent(seq,packet);
                     sendPacket(socket, packet, group);
                 } else if(seq == 0 && numPack != 1){
                     System.arraycopy(fileArray, 0, buf, 11, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                    socket.send(packet);
                     TCP.packetSent(seq,packet);
                     sendPacket(socket, packet, group);
                 } else if(seq != 0 && numPack != 1){
                     if(remain >= sendMax){
                         System.arraycopy(fileArray, seq * sendMax, buf, 11, sendSize - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                        socket.send(packet);
                         TCP.packetSent(seq,packet);
                         sendPacket(socket, packet, group);
                     } else{
                         System.arraycopy(fileArray, seq * sendMax, buf, 11, remain - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
-                        socket.send(packet);
                         TCP.packetSent(seq,packet);
                         sendPacket(socket, packet, group);
                     }
