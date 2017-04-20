@@ -21,6 +21,8 @@ public class Sender implements Runnable {
 
     private Routing routing;
 
+    private TCPHandler TCP;
+
     public Sender(Routing _routing) {
         routing = _routing;
     }
@@ -30,6 +32,8 @@ public class Sender implements Runnable {
     private static final int PORT = 8888;
 
     private int counter;
+
+    private MulticastSocket sock;
 
     int sendMax = 256;
 
@@ -44,6 +48,7 @@ public class Sender implements Runnable {
 
         try {
             socket = new MulticastSocket(8888);
+            sock = socket;
             String msg;
             System.out.println("Please enter your username");
             String name = scan.nextLine();
@@ -105,6 +110,42 @@ public class Sender implements Runnable {
             System.out.println(ip.toString());
 
             socket.send(packet);
+            TCP.packetSent(counter,packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Used by TCPHandler to resend packets
+    public void sendPacket(DatagramPacket packet) {
+        try {
+            sock.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Used by receiver to send ack packets
+    public void sendAck(int ackNumber, InetAddress destination) {
+        try{
+            byte buf[] = new byte[7];
+            buf[0] = 2;
+            byte[] seq = ByteHandler.intToBytes(ackNumber);
+            buf[1] = seq[0];
+            buf[2] = seq[1];
+            try {
+                byte[] ip = InetAddress.getLocalHost().getAddress();
+                buf[7] = ip[0];
+                buf[8] = ip[1];
+                buf[9] = ip[2];
+                buf[10] = ip[3];
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            DatagramPacket pack = new DatagramPacket(buf,buf.length,destination,PORT);
+
+            sock.send(pack);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,19 +213,23 @@ public class Sender implements Runnable {
                     System.arraycopy(fileArray, 0, buf, 7, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
+                    TCP.packetSent(seq,packet);
                 } else if(seq == 0 && numPack != 1){
                     System.arraycopy(fileArray, 0, buf, 7, sendSize);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                     socket.send(packet);
+                    TCP.packetSent(seq,packet);
                 } else if(seq != 0 && numPack != 1){
                     if(remain >= sendMax){
                         System.arraycopy(fileArray, seq * sendMax, buf, 7, sendSize - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                         socket.send(packet);
+                        TCP.packetSent(seq,packet);
                     } else{
                         System.arraycopy(fileArray, seq * sendMax, buf, 7, remain - 1);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, PORT);
                         socket.send(packet);
+                        TCP.packetSent(seq,packet);
                     }
 
                 }
@@ -208,4 +253,8 @@ public class Sender implements Runnable {
         }
     }
 
+
+    public void setTCP(TCPHandler tcp) {
+        TCP = tcp;
+    }
 }

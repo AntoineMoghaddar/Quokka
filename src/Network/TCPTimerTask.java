@@ -1,5 +1,6 @@
 package Network;
 
+import java.net.DatagramPacket;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,25 +8,30 @@ import java.util.TimerTask;
  * Created by Rowin on 18-4-2017.
  */
 public class TCPTimerTask extends TimerTask{
+
     private TCPHandler owner;
 
     private int ackNumber;
 
-    public TCPTimerTask(TCPHandler _owner, int _ackNumber) {
+    private DatagramPacket packet;
+
+    public TCPTimerTask(TCPHandler _owner, int _ackNumber, DatagramPacket _packet) {
         owner = _owner;
         ackNumber= _ackNumber;
+        packet = _packet;
     }
 
     @Override
     public void run() {
-        if(owner.needsRetransmit(ackNumber)){
-            // We need to retransmit
+        // Assume here that the ack has not been received
 
+        owner.resend(packet);
 
-            //start a new Timer
-            new Timer().schedule(new TCPTimerTask(owner, ackNumber),1000);
-        }
+        // Add another timer
+        owner.addTimer(ackNumber, packet);
+    }
 
-
+    public int getAckNumber() {
+        return ackNumber;
     }
 }

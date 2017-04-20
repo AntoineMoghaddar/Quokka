@@ -17,8 +17,12 @@ public class Receiver implements Runnable {
 
     private Routing routing;
 
+    private TCPHandler TCP;
+
     public Receiver(Routing _routing, Sender ownSender) {
         routing = _routing;
+        TCPHandler TCP = new TCPHandler(this);
+        ownSender.setTCP(TCP);
         this.ownSender = ownSender;
     }
 
@@ -58,11 +62,26 @@ public class Receiver implements Runnable {
 
         InetAddress originalSource = ByteHandler.byteToInet(Arrays.copyOfRange(receivedPacket.getData(), 7,10));
 
+        // Add both clients to TCPHandler
+        TCP.addClient(receivedPacket.getAddress(), originalSource);
+
         // Forward packet if needed
         if(!routing.forwardAddresses(originalSource).isEmpty()) {
             ArrayList<InetAddress> list = routing.forwardAddresses(originalSource);
             for(InetAddress dest : list) {
                 ownSender.forwardPacket(socket,receivedPacket, originalSource, dest);
+            }
+        }
+
+        //Send ack if not ack pack itself, exit function if duplicate pack
+        if(receivedPacket.getData()[0] != 2) {
+            //if not ack packet
+            int receivedSeq = ((receivedPacket.getData()[2] & 0xff) << 8) | (receivedPacket.getData()[1] & 0xff);
+
+
+            if(TCP.packetReceived(receivedSeq,originalSource)){
+                // Packet is a duplicate
+                return;
             }
         }
 
@@ -81,6 +100,9 @@ public class Receiver implements Runnable {
                 break;
             case 2:
                 //ACK packet
+
+                int receivedAck = ((receivedPacket.getData()[2] & 0xff) << 8) | (receivedPacket.getData()[1] & 0xff);
+                TCP.ackReceived(receivedAck, originalSource);
             case 4:
                 receiveFile(socket, receivedPacket);
 
@@ -141,4 +163,5 @@ public class Receiver implements Runnable {
         return newText;
     }
 
+    public Sender getOwnSender() { return ownSender; }
 }
