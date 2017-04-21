@@ -14,8 +14,6 @@ public class TCPHandler {
 
     private final int TIMEOUT = 1000; // ms waiting time for resending of packet
 
-    private int ackNumber = 0;
-
     private Receiver ownReceiver;
 
     // Ack we expect to receive
