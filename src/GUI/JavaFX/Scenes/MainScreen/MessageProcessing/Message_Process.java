@@ -95,7 +95,7 @@ public class Message_Process {
             throw new LineException("No data found in line");
         }
 
-        if (lineData.length > 2) {
+        if (lineData.length >= 2) {
             newMessage = new Message(
                     login_process.getUser(
                             lineData[0]),
