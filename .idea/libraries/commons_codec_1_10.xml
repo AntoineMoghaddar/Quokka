@@ -1,9 +1,13 @@
 <component name="libraryTable">
   <library name="commons-codec-1.10">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Desktop/commons-codec-1.10.jar!/" />
+      <root url="file://$USER_HOME$/Desktop/mod 3/proj/commons-codec-1.10" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$USER_HOME$/Desktop/mod 3/proj/commons-codec-1.10" />
+    </SOURCES>
+    <jarDirectory url="file://$USER_HOME$/Desktop/mod 3/proj/commons-codec-1.10" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/Desktop/mod 3/proj/commons-codec-1.10" recursive="false" type="SOURCES" />
   </library>
 </component>

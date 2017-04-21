@@ -145,10 +145,6 @@ public class Receiver implements Runnable {
                     }
                 }else {
                     //write to file
-                    String add = "x;";
-                    int addLength = add.getBytes().length;
-                    byte[] addBuf = new byte[addLength + 1];
-                    System.arraycopy(add.getBytes(), 0, addBuf, 1, addLength);
                     Message_Process mp = Message_Process.getInstance();
                     String message = new String(file, "UTf-8");
                     System.out.println(message);
