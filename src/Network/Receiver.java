@@ -17,6 +17,8 @@ public class Receiver implements Runnable {
 
     private Sender ownSender;
 
+    private int fileCounter = 0;
+
     private Routing routing;
 
     private TCPHandler TCP;
@@ -103,12 +105,16 @@ public class Receiver implements Runnable {
                 break;
             case 2:
                 //ACK packet
-
                 int receivedAck = ((receivedPacket.getData()[2] & 0xff) << 8) | (receivedPacket.getData()[1] & 0xff);
                 TCP.ackReceived(receivedAck, originalSource);
+                break;
             case 4:
+                //receive message
+                receiveMsg(socket, receivedPacket);
+                break;
+            case 5:
                 receiveFile(socket, receivedPacket);
-
+                break;
             default:
                 // Wrong packet, discard
                 break;
@@ -121,7 +127,7 @@ public class Receiver implements Runnable {
      * @param socket
      * @param packet
      */
-    private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
+    private void receiveMsg(MulticastSocket socket, DatagramPacket packet) {
         try {
             byte[] buf = packet.getData();
             byte[] res = null;
@@ -147,9 +153,47 @@ public class Receiver implements Runnable {
                     //write to file
                     Message_Process mp = Message_Process.getInstance();
                     String message = new String(file, "UTf-8");
-                    System.out.println(message);
                     mp.fileWriter("x","x", message);
                 }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    private void receiveFile(MulticastSocket socket, DatagramPacket packet) {
+        try {
+            byte[] buf = packet.getData();
+            byte[] res = null;
+            //receive data from header
+            int seq = ((buf[2] & 0xff) << 8) | (buf[1] & 0xff);
+            int numPack = ((buf[4] & 0xff) << 8) | (buf[3] & 0xff);
+            int bytes = ((buf[6] & 0xff) << 8) | (buf[5] & 0xff);
+            //store data in byte[]
+            if(seq < numPack) {
+                if (seq == 0) {
+                    file = new byte[bytes];
+                    System.arraycopy(buf, 11, file, 0, bytes);
+                    return;
+                } else {
+                    res = new byte[file.length];
+                    System.arraycopy(file, 0, res, 0, file.length);
+                    file = new byte[res.length + bytes];
+                    System.arraycopy(res, 0, file, 0, res.length);
+                    System.arraycopy(file, res.length, buf, 11, bytes);
+                    return;
+                }
+            }else {
+                //write to file
+                FileOutputStream stream = new FileOutputStream("file" + fileCounter);
+                stream.write(file);
+                stream.flush();
+                stream.close();
+                fileCounter++;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

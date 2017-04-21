@@ -6,6 +6,7 @@ import Helperclasses.Exceptions.LineException;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -17,6 +18,8 @@ public class Message_Process {
     private ArrayList<Message> messagesReWrite;
     private Login_Process login_process = Login_Process.getInstance();
     private static Message_Process instance;
+    private String file = "File.";
+    private String path2 = "";
 
     /**
      * @Definition Constructor of this class
@@ -59,18 +62,24 @@ public class Message_Process {
             while (fileScanner.hasNextLine()) {
                 linenumber++;
                 String line = fileScanner.nextLine();
-                if (!(line.startsWith("#")) && (!(line.isEmpty()))) {
-                    try {
-                        if (messagesReWrite.size() != messages.size()) {
+                if (line.toLowerCase().indexOf(file.toLowerCase()) != -1) {
+                    String[] paths = line.split("File.");
+                    String path1 = paths[1];
+                    path2 = path1.replace(";", "");
+                } else {
+                    if (!(line.startsWith("#")) && (!(line.isEmpty()))) {
+                        try {
+                            if (messagesReWrite.size() != messages.size()) {
 //                            Logger.confirm(messagesReWrite.size() + "SIZE OF MESSAGE REWRITE; " +
 //                                    + messages.size() + "SIZE OF MESSAGES");
-                            messages.add(processLineUserFile(line));
-                            amountObjects++;
-                        } else {
-                            messagesReWrite.add(processLineUserFile(line));
+                                messages.add(processLineUserFile(line));
+                                amountObjects++;
+                            } else {
+                                messagesReWrite.add(processLineUserFile(line));
+                            }
+                        } catch (LineException le) {
+                            Logger.err(le.getMessage() + " on line " + linenumber);
                         }
-                    } catch (LineException le) {
-                        Logger.err(le.getMessage() + " on line " + linenumber);
                     }
                 }
             }
@@ -149,6 +158,14 @@ public class Message_Process {
     public  ArrayList<Message> getMessages() {
         Logger.console(toString());
         return messages;
+    }
+
+    public String getPath(){
+        return path2;
+    }
+
+    public void setPath(String path){
+        path2 = path;
     }
 
     public void addMessages(Message message){

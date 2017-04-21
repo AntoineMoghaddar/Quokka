@@ -1,17 +1,14 @@
 package Network;
 
+import GUI.JavaFX.Scenes.MainScreen.MessageProcessing.Message_Process;
 import Helperclasses.*;
-import javax.sound.sampled.Port;
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
+import GUI.*;
 
 
 /**
@@ -21,6 +18,7 @@ public class Sender implements Runnable {
 
     private Routing routing;
 
+    Message_Process mp = Message_Process.getInstance();
     private TCPHandler TCP;
 
     /**
@@ -45,6 +43,8 @@ public class Sender implements Runnable {
     private String file = "File.";
 
     private String name = "";
+
+    private String path = "";
 
     /**
      * @use runs instance of sender and sets up connection
@@ -80,12 +80,10 @@ public class Sender implements Runnable {
 
                 msg = scan.nextLine();
 
-                if (msg.toLowerCase().indexOf(file.toLowerCase()) != -1) {
-                    String[] paths = msg.split("File.");
-                    System.out.println(Arrays.toString(paths));
-                    String path1 = paths[1];
-                    sendFile(socket, address, ip, path1);
-
+                if (!(mp.getPath().equals(""))){
+                    path = mp.getPath();
+                    sendFile(socket, address, ip, path);
+                    mp.setPath("");
                 } else {
                     msgLength = msg.getBytes().length;
                     outBuf = new byte[msgLength + 1];
@@ -310,7 +308,7 @@ public class Sender implements Runnable {
             byte[] buf = new byte[sendSize + 11];
             System.arraycopy(msgArray, 0, buf, 11, msgLength);
             // [0] packet type, [1][2] seq, [3][4] total packets, [5][6] amount of data bytes, [7-10] address
-            buf[0] = 4;
+            buf[0] = 5;
             byte[] bufSeq = ByteHandler.intToBytes(seq);
             buf[1] = bufSeq[0];
             buf[2] = bufSeq[1];
@@ -366,7 +364,7 @@ public class Sender implements Runnable {
      */
     private void sendEndPacket(MulticastSocket socket, InetAddress group, int numPack, int sendSize, InetAddress ip){
         byte[] buf = new byte[11];
-        buf[0] = 4;
+        buf[0] = 5;
         byte[] bufSeq = ByteHandler.intToBytes(numPack);
         buf[1] = bufSeq[0];
         buf[2] = bufSeq[1];
