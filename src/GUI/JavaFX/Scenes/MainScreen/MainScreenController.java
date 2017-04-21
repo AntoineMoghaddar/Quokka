@@ -87,7 +87,7 @@ public class MainScreenController implements Initializable {
                         login_process.getUser(ListViewMain.getSelectionModel().getSelectedItem().toString()),
                         writeMessage.getText());
 
-                message_process.addMessages(messagecurr);
+                //message_process.addMessages(messagecurr);
                 writeMessage.setText("");
                 processMessage(messagecurr);
                 index++;
